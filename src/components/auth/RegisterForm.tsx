@@ -65,9 +65,9 @@ export default function RegisterForm() {
           autoComplete="name"
           autoFocus
           disabled={isLoading}
-          {...register('name', { 
-            required: 'الاسم مطلوب', 
-            minLength: { value: 3, message: 'يجب أن يكون الاسم 3 أحرف على الأقل' } 
+          {...register('name', {
+            required: 'الاسم مطلوب',
+            minLength: { value: 3, message: 'يجب أن يكون الاسم 3 أحرف على الأقل' }
           })}
           error={!!errors.name}
           helperText={errors.name?.message}
@@ -80,12 +80,12 @@ export default function RegisterForm() {
           label="البريد الإلكتروني"
           autoComplete="email"
           disabled={isLoading}
-          {...register('email', { 
-            required: 'البريد الإلكتروني مطلوب', 
-            pattern: { 
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-              message: 'بريد إلكتروني غير صالح' 
-            } 
+          {...register('email', {
+            required: 'البريد الإلكتروني مطلوب',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'بريد إلكتروني غير صالح'
+            }
           })}
           error={!!errors.email}
           helperText={errors.email?.message}
@@ -99,9 +99,9 @@ export default function RegisterForm() {
           id="password"
           autoComplete="new-password"
           disabled={isLoading}
-          {...register('password', { 
-            required: 'كلمة المرور مطلوبة', 
-            minLength: { value: 6, message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' } 
+          {...register('password', {
+            required: 'كلمة المرور مطلوبة',
+            minLength: { value: 6, message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }
           })}
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -134,6 +134,7 @@ export default function RegisterForm() {
               >
                 <MenuItem value="tenant">مستخدم (مستأجر)</MenuItem>
                 <MenuItem value="owner">مالك عقار</MenuItem>
+                <MenuItem value="admin">مدير</MenuItem>
               </Select>
             )}
           />

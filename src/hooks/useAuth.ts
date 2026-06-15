@@ -51,7 +51,15 @@ export function useAuth() {
         setUser(data.user);
         setIsAuthenticated(true);
         const defaultPath =
-          data.user.role === "owner" ? "/dashboard/owner" : "/Profile";
+          data.user.role === "tenant"
+            ? "/"
+            : data.user.role === "owner"
+              ? "/dashboard/owner"
+              : data.user.role === "admin"
+                ? "/dashboard/admin"
+                : data.user.role === "superadmin"
+                  ? "/dashboard/superadmin"
+                  : "";
         window.location.href = defaultPath;
       }
 
@@ -66,9 +74,7 @@ export function useAuth() {
     }
   };
 
-  const register = async (
-    credentials: RegisterCredentials
-  ) => {
+  const register = async (credentials: RegisterCredentials) => {
     try {
       setIsLoading(true);
       setError(null);
