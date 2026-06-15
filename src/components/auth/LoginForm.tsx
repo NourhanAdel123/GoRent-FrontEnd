@@ -63,12 +63,12 @@ export default function LoginForm() {
           autoComplete="email"
           autoFocus
           disabled={isLoading}
-          {...register('email', { 
-            required: 'البريد الإلكتروني مطلوب', 
-            pattern: { 
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-              message: 'بريد إلكتروني غير صالح' 
-            } 
+          {...register('email', {
+            required: 'البريد الإلكتروني مطلوب',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'بريد إلكتروني غير صالح'
+            }
           })}
           error={!!errors.email}
           helperText={errors.email?.message}
@@ -86,28 +86,6 @@ export default function LoginForm() {
           error={!!errors.password}
           helperText={errors.password?.message}
         />
-
-        <FormControl fullWidth margin="normal" error={!!errors.role}>
-          <InputLabel id="login-role-select-label">تسجيل الدخول كـ</InputLabel>
-          <Controller
-            name="role"
-            control={control}
-            rules={{ required: 'يرجى اختيار نوع الحساب' }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                labelId="login-role-select-label"
-                id="login-role-select"
-                label="تسجيل الدخول كـ"
-                disabled={isLoading}
-              >
-                <MenuItem value="tenant">مستخدم (مستأجر)</MenuItem>
-                <MenuItem value="owner">مالك عقار</MenuItem>
-              </Select>
-            )}
-          />
-          {errors.role && <FormHelperText>{errors.role.message}</FormHelperText>}
-        </FormControl>
 
         <Button
           type="submit"
