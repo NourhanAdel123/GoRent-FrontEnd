@@ -155,7 +155,7 @@ export default function Navbar() {
                     component={Link}
                     href={
                       user?.role === "tenant"
-                        ? "/"
+                        ? "/Profile"
                         : user.role === "owner"
                           ? "/dashboard/owner"
                           : user.role === "admin"

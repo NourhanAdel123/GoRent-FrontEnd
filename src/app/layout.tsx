@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Cairo } from 'next/font/google';
 import ThemeRegistry from '../lib/ThemeRegistry';
 import LayoutWrapper from '../components/shared/LayoutWrapper';
+import StoreProvider from '../store/StoreProvider';
 import './globals.css';
 
 const cairo = Cairo({ subsets: ['arabic'] });
@@ -20,9 +21,11 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={cairo.className} style={{ margin: 0, padding: 0 }}>
         <ThemeRegistry>
-          <LayoutWrapper>
-            {children}
-          </LayoutWrapper>
+          <StoreProvider>
+            <LayoutWrapper>
+              {children}
+            </LayoutWrapper>
+          </StoreProvider>
         </ThemeRegistry>
       </body>
     </html>

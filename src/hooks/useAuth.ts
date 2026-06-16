@@ -1,55 +1,59 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { User, LoginCredentials, RegisterCredentials } from "../types/user";
 import { authService } from "../services/auth";
+import { setUser, clearUser, setLoading, setError } from "../store/slices/authSlice";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch();
+  const [user, setUserState] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
+  const [isLoading, setIsLoadingState] = useState(true);
+  const [error, setErrorState] = useState<string | null>(null);
 
   const fetchUser = useCallback(async () => {
     try {
       const data = await authService.getCurrentUser();
-
       if (data.user) {
-        setUser(data.user);
+        setUserState(data.user);
         setIsAuthenticated(true);
+        dispatch(setUser(data.user));
       } else {
-        setUser(null);
+        setUserState(null);
         setIsAuthenticated(false);
+        dispatch(clearUser());
       }
     } catch {
-      setUser(null);
+      setUserState(null);
       setIsAuthenticated(false);
+      dispatch(clearUser());
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const init = async () => {
-      setIsLoading(true);
+      setIsLoadingState(true);
       await fetchUser();
-      setIsLoading(false);
+      setIsLoadingState(false);
     };
-
     init();
   }, [fetchUser]);
 
   const login = async (credentials: LoginCredentials) => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsLoadingState(true);
+      setErrorState(null);
+      dispatch(setLoading(true));
 
       const data = await authService.login(credentials);
 
       if (data.user) {
-        setUser(data.user);
+        setUserState(data.user);
         setIsAuthenticated(true);
+        dispatch(setUser(data.user));
+
         const defaultPath =
           data.user.role === "tenant"
             ? "/"
@@ -59,31 +63,35 @@ export function useAuth() {
                 ? "/dashboard/admin"
                 : data.user.role === "superadmin"
                   ? "/dashboard/superadmin"
-                  : "";
+                  : "/";
         window.location.href = defaultPath;
       }
 
       return data;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "فشل تسجيل الدخول";
-
-      setError(message);
+      setErrorState(message);
+      dispatch(setError(message));
       throw err;
     } finally {
-      setIsLoading(false);
+      setIsLoadingState(false);
+      dispatch(setLoading(false));
     }
   };
 
   const register = async (credentials: RegisterCredentials) => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setIsLoadingState(true);
+      setErrorState(null);
+      dispatch(setLoading(true));
 
       const data = await authService.register(credentials);
 
       if (data.user) {
-        setUser(data.user);
+        setUserState(data.user);
         setIsAuthenticated(true);
+        dispatch(setUser(data.user));
+
         const defaultPath =
           data.user.role === "owner" ? "/dashboard/owner" : "/Profile";
         window.location.href = defaultPath;
@@ -92,30 +100,29 @@ export function useAuth() {
       return data;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "فشل إنشاء الحساب";
-
-      setError(message);
+      setErrorState(message);
+      dispatch(setError(message));
       throw err;
     } finally {
-      setIsLoading(false);
+      setIsLoadingState(false);
+      dispatch(setLoading(false));
     }
   };
 
   const logout = async () => {
     try {
-      setIsLoading(true);
-
+      setIsLoadingState(true);
       await authService.logout();
-
-      setUser(null);
+      setUserState(null);
       setIsAuthenticated(false);
-
+      dispatch(clearUser());
       window.location.href = "/auth/login";
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "فشل تسجيل الخروج";
-
-      setError(message);
+      setErrorState(message);
+      dispatch(setError(message));
     } finally {
-      setIsLoading(false);
+      setIsLoadingState(false);
     }
   };
 
