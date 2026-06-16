@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Grid, TextField, Button } from '@mui/material';
 import { User } from '../../types/user';
 import { TabType } from './ProfileSidebar';
+import BookingsTab from "./tabs/BookingsTab";
 
 interface ProfileContentProps {
   user: User;
@@ -18,7 +19,7 @@ export default function ProfileContent({ user, activeTab }: ProfileContentProps)
 
   switch (activeTab) {
     case 'bookings':
-      return <Typography variant="h5" sx={{ fontWeight: 'bold' }}>حجوزاتي</Typography>;
+      return <BookingsTab />;
     case 'contracts':
       return <Typography variant="h5" sx={{ fontWeight: 'bold' }}>عقودي وإيجاراتي</Typography>;
     case 'messages':
@@ -28,6 +29,6 @@ export default function ProfileContent({ user, activeTab }: ProfileContentProps)
     case 'settings':
       return <Typography variant="h5" sx={{ fontWeight: 'bold' }}>الإعدادات</Typography>;
     default:
-      return null;
+      return <BookingsTab />;
   }
 }
