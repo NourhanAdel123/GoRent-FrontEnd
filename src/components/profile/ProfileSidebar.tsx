@@ -5,15 +5,10 @@ import {
   Box,
   Paper,
   Avatar,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Typography,
-  Divider
+  Divider,
+  ButtonBase,
 } from '@mui/material';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutlined';
@@ -42,66 +37,130 @@ export default function ProfileSidebar({ user, activeTab, onTabChange, onLogout 
   ];
 
   return (
-    <Paper elevation={0} sx={{ borderRadius: 4, overflow: 'hidden', border: '1px solid #eaeaea' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4, bgcolor: '#ffffff' }}>
+    <Paper
+      elevation={0}
+      sx={{
+        borderRadius: 4,
+        overflow: 'hidden',
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: '0px 2px 12px rgba(0,0,0,0.06)',
+      }}
+    >
+      {/* User Info - Desktop only */}
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', p: 4 }}>
         <Box sx={{ position: 'relative' }}>
-          <Avatar
-            sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem' }}
-          >
+          <Avatar sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem' }}>
             {user.name ? user.name[0].toUpperCase() : 'U'}
           </Avatar>
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: 16,
-              right: -4,
-              bgcolor: '#fff',
-              borderRadius: '50%',
-              p: 0.5,
-              boxShadow: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <CameraAltIcon color="primary" fontSize="small" />
+          <Box sx={{
+            position: 'absolute', bottom: 16, right: -4,
+            bgcolor: 'background.paper', borderRadius: '50%',
+            p: 0.5, boxShadow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <CameraAltIcon color="primary" sx={{ fontSize: 18 }} />
           </Box>
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{user.name}</Typography>
         <Typography variant="body2" color="text.secondary">مستأجر</Typography>
       </Box>
 
-      <List sx={{ px: 2, pb: 2, pt: 0, bgcolor: '#ffffff' }}>
-        {menuItems.map((item) => (
-          <ListItem disablePadding sx={{ mb: 1 }} key={item.id}>
-            <ListItemButton
-              selected={activeTab === item.id}
+      {/* User Info - Mobile only (compact row) */}
+      <Box sx={{
+        display: { xs: 'flex', md: 'none' },
+        alignItems: 'center',
+        gap: 1.5,
+        px: 2,
+        py: 1.5,
+      }}>
+        <Box sx={{ position: 'relative', flexShrink: 0 }}>
+          <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: '1rem' }}>
+            {user.name ? user.name[0].toUpperCase() : 'U'}
+          </Avatar>
+          <Box sx={{
+            position: 'absolute', bottom: -2, right: -4,
+            bgcolor: 'background.paper', borderRadius: '50%',
+            p: 0.3, boxShadow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <CameraAltIcon color="primary" sx={{ fontSize: 10 }} />
+          </Box>
+        </Box>
+        <Box>
+          <Typography variant="body2" sx={{ fontWeight: 'bold', lineHeight: 1.2 }}>{user.name}</Typography>
+          <Typography variant="caption" color="text.secondary">مستأجر</Typography>
+        </Box>
+      </Box>
+
+      <Divider />
+
+      {/* Menu */}
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'row', md: 'column' },
+        overflowX: { xs: 'auto', md: 'unset' },
+        px: { xs: 1, md: 2 },
+        py: { xs: 1, md: 2 },
+        gap: 1,
+        bgcolor: 'background.paper',
+        '&::-webkit-scrollbar': { display: 'none' },
+      }}>
+        {menuItems.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <ButtonBase
+              key={item.id}
               onClick={() => onTabChange(item.id as TabType)}
               sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: 'center',
+                gap: { xs: 0.5, md: 1.5 },
+                px: { xs: 1.5, md: 2 },
+                py: { xs: 1, md: 1.2 },
                 borderRadius: 2,
-                '&.Mui-selected': { bgcolor: 'primary.main', color: '#fff' },
-                '&.Mui-selected:hover': { bgcolor: 'primary.dark' }
+                flexShrink: 0,
+                bgcolor: isActive ? 'primary.main' : 'transparent',
+                color: isActive ? '#fff' : 'text.primary',
+                transition: 'all 0.2s ease',
+                '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' },
               }}
             >
-              <ListItemIcon sx={{ color: activeTab === item.id ? '#fff' : 'inherit', minWidth: 40 }}>
+              <Box sx={{ color: isActive ? '#fff' : 'text.secondary', display: 'flex', '& svg': { fontSize: { xs: '18px', md: '22px' } } }}>
                 {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              </Box>
+              <Typography variant="body2" sx={{ fontWeight: isActive ? 700 : 500, fontSize: { xs: '0.7rem', md: '0.875rem' } }}>
+                {item.label}
+              </Typography>
+            </ButtonBase>
+          );
+        })}
+      </Box>
 
-        <Divider sx={{ my: 1 }} />
+      <Divider />
 
-        <ListItem disablePadding>
-          <ListItemButton onClick={onLogout}>
-            <ListItemIcon sx={{ color: 'error.main', minWidth: 40 }}>
-              <LogoutOutlinedIcon />
-            </ListItemIcon>
-            <ListItemText primary="تسجيل خروج" sx={{ color: 'error.main' }} />
-          </ListItemButton>
-        </ListItem>
-      </List>
+      {/* Logout */}
+      <Box sx={{ px: { xs: 1, md: 2 }, py: 1, bgcolor: 'background.paper' }}>
+        <ButtonBase
+          onClick={onLogout}
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: 'center',
+            gap: { xs: 0.5, md: 1.5 },
+            px: { xs: 1.5, md: 2 },
+            py: { xs: 1, md: 1.2 },
+            borderRadius: 2,
+            width: '100%',
+            color: 'error.main',
+            '&:hover': { bgcolor: 'action.hover' },
+          }}
+        >
+          <LogoutOutlinedIcon sx={{ fontSize: { xs: '18px', md: '22px' } }} />
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.7rem', md: '0.875rem' } }}>
+            خروج
+          </Typography>
+        </ButtonBase>
+      </Box>
     </Paper>
   );
 }

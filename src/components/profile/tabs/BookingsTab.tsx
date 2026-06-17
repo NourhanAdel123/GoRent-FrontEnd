@@ -34,22 +34,14 @@ export default function BookingsTab() {
     }
 
     return (
-        <Box>
-            <Typography
-                variant="h5"
-                sx={{ fontWeight: "bold", mb: 3, color: "primary.main", textAlign: "center" }}
-            >
-                حجوزاتي
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {bookings.map((booking) => (
-                    <BookingCard
-                        key={booking._id}
-                        booking={booking}
-                        onCancel={cancelBooking}
-                    />
-                ))}
-            </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: '100%' }}>
+            {bookings.map((booking) => (
+                <BookingCard
+                    key={booking._id}
+                    booking={booking}
+                    onCancel={cancelBooking}
+                />
+            ))}
         </Box>
     );
 }
