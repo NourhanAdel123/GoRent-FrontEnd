@@ -8,9 +8,8 @@ import { Booking } from "../../types/booking";
 
 const statusMap = {
     PENDING_PAYMENT: { label: "في انتظار الدفع", color: "warning" as const },
-    CONFIRMED: { label: "مؤكد", color: "success" as const },
+    RESERVED: { label: "محجوز", color: "success" as const },
     CANCELLED: { label: "ملغي", color: "error" as const },
-    COMPLETED: { label: "مكتمل", color: "default" as const },
 };
 
 interface BookingCardProps {
@@ -93,7 +92,7 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                             {booking.amountPaid.toLocaleString()} ج.م / شهر
                         </Typography>
 
-                        {booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && (
+                        {booking.status !== "CANCELLED" && (
                             <Button
                                 variant="contained"
                                 color="error"

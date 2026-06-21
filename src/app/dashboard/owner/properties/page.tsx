@@ -1,9 +1,7 @@
-function Properties() {
-    return (
-        <div>
-            <h1>Properties</h1>
-        </div>
-    );
-}
+"use client";
 
-export default Properties;
+import OwnerPropertiesContent from "../../../../components/dashboard/owner/OwnerPropertiesContent";
+
+export default function OwnerPropertiesPage() {
+  return <OwnerPropertiesContent />;
+}

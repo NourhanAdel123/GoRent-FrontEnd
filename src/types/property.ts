@@ -1,0 +1,112 @@
+export type PropertyStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type PropertyType = "APARTMENT" | "SHOP";
+
+export interface PropertyLocation {
+  type: "Point";
+  coordinates: [number, number];
+}
+
+export interface PropertySpecifications {
+  apartment?: {
+    bedrooms?: number | null;
+    bathrooms?: number | null;
+    hasElevator?: boolean | null;
+  };
+  shop?: {
+    electricityCapacity?: number | null;
+    footTrafficTier?: string | null;
+    commercialLicenseRequired?: boolean | null;
+  };
+}
+
+export interface Property {
+  _id: string;
+  ownerId: string;
+  type: PropertyType;
+  title: string;
+  description: string;
+  pricePerMonth: number;
+  squareFootage: number;
+  images: string[];
+  views?: number;
+  viewingCount?: number;
+  location: PropertyLocation;
+  isAvailable: boolean;
+  status: PropertyStatus;
+  specifications?: PropertySpecifications;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OwnerPropertiesResponse {
+  properties: Property[];
+}
+
+export interface OwnerDashboardStats {
+  totalViews: number;
+  activeContracts: number;
+  viewingRequests: number;
+  monthlyIncome: number;
+  changes: {
+    totalViews: number;
+    activeContracts: number;
+    viewingRequests: number;
+    monthlyIncome: number;
+  };
+}
+
+export interface OwnerDashboardResponse {
+  stats: OwnerDashboardStats;
+  properties: Property[];
+}
+
+export interface CreatePropertyPayload {
+  type: PropertyType;
+  title: string;
+  description: string;
+  pricePerMonth: number;
+  squareFootage: number;
+  location: PropertyLocation;
+  isAvailable: boolean;
+  specifications?: {
+    apartment?: {
+      bedrooms?: number;
+      bathrooms?: number;
+      hasElevator?: boolean;
+    };
+    shop?: {
+      electricityCapacity?: number;
+      footTrafficTier?: string;
+      commercialLicenseRequired?: boolean;
+    };
+  };
+}
+
+export interface CreatePropertyResponse {
+  message: string;
+  property: Property;
+}
+
+export interface UpdatePropertyResponse {
+  message: string;
+  property: Property;
+}
+
+export interface DeletePropertyResponse {
+  message: string;
+}
+
+export interface PropertyFormValues {
+  title: string;
+  description: string;
+  type: PropertyType;
+  pricePerMonth: string;
+  squareFootage: string;
+  isAvailable: boolean;
+  bedrooms: string;
+  bathrooms: string;
+  hasElevator: boolean;
+  electricityCapacity: string;
+  footTrafficTier: string;
+  commercialLicenseRequired: boolean;
+}
