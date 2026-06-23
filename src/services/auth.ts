@@ -64,4 +64,10 @@ export const authService = {
       method: "GET",
     });
   },
+
+  getSocketToken: async (): Promise<{ token: string }> => {
+    return fetchApi<{ token: string }>("/api/auth/socket-token", {
+      method: "GET",
+    });
+  },
 };

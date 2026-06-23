@@ -1,9 +1,16 @@
-function Messages() {
-    return (
-        <div>
-            <h1>Messages</h1>
-        </div>
-    );
-}
+import { Suspense } from "react";
+import OwnerMessagesContent from "../../../../components/dashboard/owner/OwnerMessagesContent";
 
-export default Messages;
+export default function OwnerMessagesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[560px] items-center justify-center text-sm text-gray-500">
+          جاري تحميل الرسائل...
+        </div>
+      }
+    >
+      <OwnerMessagesContent />
+    </Suspense>
+  );
+}
