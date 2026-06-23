@@ -2,7 +2,7 @@ export interface Property {
   _id: string;
   title: string;
   description: string;
-  type: "RESIDENTIAL" | "COMMERCIAL";
+  type: "APARTMENT" | "SHOP";
   pricePerMonth: number;
   squareFootage: number;
   images: string[];
