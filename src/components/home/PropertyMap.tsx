@@ -141,8 +141,8 @@ export default function PropertyMap({ properties, searchCenter, searchRadius, on
         scrollWheelZoom={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; Google Maps'
+          url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=ar"
         />
 
         <MapEvents onMapClick={(lat, lng) => onMapClick && onMapClick(lat, lng, radiusInput)} />
@@ -177,7 +177,7 @@ export default function PropertyMap({ properties, searchCenter, searchRadius, on
                   )}
                   <h3 className="font-semibold text-gray-900 line-clamp-1">{property.title}</h3>
                   <p className="text-sm font-bold text-blue-600">{property.pricePerMonth} ج.م / شهر</p>
-                  <p className="text-xs text-gray-500 capitalize">{property.type === 'RESIDENTIAL' ? 'سكني' : property.type === 'COMMERCIAL' ? 'تجاري' : property.type}</p>
+                  <p className="text-xs text-gray-500 capitalize">{property.type === 'APARTMENT' ? 'سكني' : property.type === 'SHOP' ? 'تجاري' : property.type}</p>
                 </div>
               </Popup>
             </Marker>

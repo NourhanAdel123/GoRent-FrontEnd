@@ -8,7 +8,7 @@ export default function BookingModalHeader({ onClose }: BookingModalHeaderProps)
   return (
     <div className="bg-zinc-900 px-6 py-5 flex items-center justify-between">
       <div>
-        <h2 className="text-white font-bold text-xl">طلب معاينة</h2>
+        <h2 className="text-white font-bold text-xl"> تأكيد الحجز</h2>
         <p className="text-zinc-400 text-sm mt-0.5">حدد مدة الإيجار المطلوبة</p>
       </div>
       <button
