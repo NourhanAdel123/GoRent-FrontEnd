@@ -26,10 +26,7 @@ export function useAdminReviews() {
             await adminService.deleteReview(id);
             await fetchReviews();
         } catch (err) {
-            // Surface the backend's real message — e.g. the API currently
-            // only allows a review's own author to delete it, so an admin
-            // acting on someone else's review will see that 403 explained
-            // here instead of a generic message.
+
             const message = err instanceof Error ? err.message : "فشل حذف التقييم";
             setError(message);
         }

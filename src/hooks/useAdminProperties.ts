@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { AdminProperty } from "../types/admin";
 import { adminService } from "../services/admin";
 
@@ -9,27 +9,18 @@ export function useAdminProperties() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchProperties = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            const data = await adminService.getProperties();
-            setProperties(data.properties);
-        } catch {
-            setError("فشل جلب العقارات");
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
     const updatePropertyStatus = async (
         id: string,
         status: AdminProperty["status"]
     ) => {
         try {
             await adminService.updatePropertyStatus(id, status);
-            await fetchProperties();
-        } catch {
-            setError("فشل تحديث حالة العقار");
+            setProperties((prev) =>
+                prev.map((p) => (p._id === id ? { ...p, status } : p))
+            );
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "فشل تحديث حالة العقار";
+            setError(message);
         }
     };
 
