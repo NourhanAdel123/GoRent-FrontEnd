@@ -9,27 +9,24 @@ export function useAdminReport() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let ignore = false;
+    const load = async () => {
+        try {
+            setIsLoading(true);
+            const data = await adminService.getReport();
+            setReport(data.report);
+        } catch {
+            setError("فشل جلب التقارير");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-        const load = async () => {
-            try {
-                setIsLoading(true);
-                const data = await adminService.getReport();
-                if (!ignore) setReport(data.report);
-            } catch {
-                if (!ignore) setError("فشل جلب التقارير");
-            } finally {
-                if (!ignore) setIsLoading(false);
-            }
+    useEffect( () => {
+        const runLoad = async () => {
+            await load();
         };
-
-        load();
-
-        return () => {
-            ignore = true;
-        };
+        runLoad();
     }, []);
 
-    return { report, isLoading, error };
+    return { report, isLoading, error, refreshReport: load };
 }

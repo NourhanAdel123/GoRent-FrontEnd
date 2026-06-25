@@ -1,11 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AdminProperty } from "../types/admin";
+import { AdminProperty, Pagination } from "../types/admin";
 import { adminService } from "../services/admin";
+
+const PAGE_SIZE = 10;
 
 export function useAdminProperties() {
     const [properties, setProperties] = useState<AdminProperty[]>([]);
+    const [pagination, setPagination] = useState<Pagination>({
+        page: 1,
+        limit: PAGE_SIZE,
+        totalItems: 0,
+        totalPages: 1,
+    });
+    const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -15,6 +24,7 @@ export function useAdminProperties() {
     ) => {
         try {
             await adminService.updatePropertyStatus(id, status);
+            setError(null);
             setProperties((prev) =>
                 prev.map((p) => (p._id === id ? { ...p, status } : p))
             );
@@ -30,8 +40,12 @@ export function useAdminProperties() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const data = await adminService.getProperties();
-                if (!ignore) setProperties(data.properties);
+                const data = await adminService.getProperties({ page, limit: PAGE_SIZE });
+                if (!ignore) {
+                    setProperties(data.properties);
+                    setPagination(data.pagination);
+                    setError(null);
+                }
             } catch {
                 if (!ignore) setError("فشل جلب العقارات");
             } finally {
@@ -44,7 +58,7 @@ export function useAdminProperties() {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [page]);
 
-    return { properties, isLoading, error, updatePropertyStatus };
+    return { properties, pagination, page, setPage, isLoading, error, updatePropertyStatus };
 }

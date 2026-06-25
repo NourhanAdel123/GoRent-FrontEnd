@@ -5,21 +5,17 @@ import { Box, Typography, Paper, Grid, Button, Skeleton } from '@mui/material';
 import Link from 'next/link';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAdminReport } from '../../../hooks/useAdminReport';
-import { useAdminUsers } from '@/hooks/useAdminUsers';
-import { useAdminProperties } from '@/hooks/useAdminProperties';
 
 export default function AdminDashboardOverview() {
   const { user } = useAuth();
   const { report, isLoading } = useAdminReport();
-  const { users } = useAdminUsers();
-  const { properties } = useAdminProperties();
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
         مرحباً بك، {user?.name || 'المدير'}
       </Typography>
-
+      
       <Grid container spacing={3} sx={{ mt: 2 }}>
         {/* Stats Cards */}
         <Grid size={{ xs: 12, sm: 4 }}>
@@ -29,7 +25,7 @@ export default function AdminDashboardOverview() {
               <Skeleton variant="text" width={60} height={48} sx={{ mx: 'auto', mt: 1 }} />
             ) : (
               <Typography variant="h3" color="primary" sx={{ mt: 1, fontWeight: 'bold' }}>
-                {users?.length ?? 0}
+                {report?.totalUsers ?? 0}
               </Typography>
             )}
           </Paper>
@@ -41,7 +37,7 @@ export default function AdminDashboardOverview() {
               <Skeleton variant="text" width={60} height={48} sx={{ mx: 'auto', mt: 1 }} />
             ) : (
               <Typography variant="h3" color="success.main" sx={{ mt: 1, fontWeight: 'bold' }}>
-                {properties?.length ?? 0}
+                {report?.totalProperties ?? 0}
               </Typography>
             )}
           </Paper>

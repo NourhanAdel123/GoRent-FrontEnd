@@ -1,25 +1,22 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { AdminDispute } from "../types/admin";
+import { useState, useEffect } from "react";
+import { AdminDispute, Pagination } from "../types/admin";
 import { adminService } from "../services/admin";
+
+const PAGE_SIZE = 10;
 
 export function useAdminDisputes() {
     const [disputes, setDisputes] = useState<AdminDispute[]>([]);
+    const [pagination, setPagination] = useState<Pagination>({
+        page: 1,
+        limit: PAGE_SIZE,
+        totalItems: 0,
+        totalPages: 1,
+    });
+    const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const fetchDisputes = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            const data = await adminService.getDisputes();
-            setDisputes(data.disputes);
-        } catch {
-            setError("فشل جلب النزاعات");
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
 
     const updateDisputeStatus = async (
         id: string,
@@ -27,7 +24,9 @@ export function useAdminDisputes() {
     ) => {
         try {
             await adminService.updateDisputeStatus(id, status);
-            await fetchDisputes();
+            setDisputes((prev) =>
+                prev.map((d) => (d._id === id ? { ...d, status } : d))
+            );
         } catch {
             setError("فشل تحديث حالة النزاع");
         }
@@ -39,8 +38,11 @@ export function useAdminDisputes() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const data = await adminService.getDisputes();
-                if (!ignore) setDisputes(data.disputes);
+                const data = await adminService.getDisputes({ page, limit: PAGE_SIZE });
+                if (!ignore) {
+                    setDisputes(data.disputes);
+                    setPagination(data.pagination);
+                }
             } catch {
                 if (!ignore) setError("فشل جلب النزاعات");
             } finally {
@@ -53,7 +55,7 @@ export function useAdminDisputes() {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [page]);
 
-    return { disputes, isLoading, error, updateDisputeStatus };
+    return { disputes, pagination, page, setPage, isLoading, error, updateDisputeStatus };
 }
