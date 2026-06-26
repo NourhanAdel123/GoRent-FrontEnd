@@ -5,6 +5,8 @@ import { Box, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListI
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../../hooks/useAuth';
+import { useNotifications } from '../../../hooks/useNotifications';
+import { Badge, Snackbar, Alert } from '@mui/material';
 
 // Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -15,11 +17,13 @@ import MessageIcon from '@mui/icons-material/Message';
 import InsightsIcon from '@mui/icons-material/Insights';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const drawerWidth = 260;
 
 export default function OwnerDashboardLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
+  const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -31,6 +35,11 @@ export default function OwnerDashboardLayout({ children }: { children: React.Rea
 
   const menuItems = [
     { title: 'نظرة عامة', path: '/dashboard/owner', icon: <DashboardIcon /> },
+    { title: 'الإشعارات', path: '/dashboard/owner/notifications', icon: (
+      <Badge badgeContent={unreadCount} color="error">
+        <NotificationsIcon />
+      </Badge>
+    ) },
     { title: 'العقارات', path: '/dashboard/owner/properties', icon: <HomeWorkIcon /> },
     { title: 'الحجوزات', path: '/dashboard/owner/bookings', icon: <EventNoteIcon /> },
     { title: 'العقود', path: '/dashboard/owner/contracts', icon: <DescriptionIcon /> },
@@ -157,6 +166,17 @@ export default function OwnerDashboardLayout({ children }: { children: React.Rea
       >
         {children}
       </Box>
+
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseToast} severity="info" sx={{ width: '100%' }}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
