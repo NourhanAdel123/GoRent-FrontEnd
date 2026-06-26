@@ -15,10 +15,9 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
+import NotificationMenu from "./NotificationMenu";
 
 const pages = [
-  { name: "الرئيسية", path: "/" },
-  { name: "العقارات", path: "/properties" },
   { name: "عن الشركة", path: "/about" },
   { name: "تواصل معنا", path: "/contact" },
 ];
@@ -143,9 +142,10 @@ export default function Navbar() {
           </Box>
 
           {/* Auth section */}
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
             {isAuthenticated && user ? (
               <>
+                <NotificationMenu />
                 <Tooltip
                   title={
                     user?.role === "owner" ? "لوحة تحكم المالك" : "الملف الشخصي"

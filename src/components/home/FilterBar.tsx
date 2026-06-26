@@ -20,7 +20,7 @@ export default function FilterBar({ filters, onFilterChange, onSearch }: FilterB
     <div className="bg-white rounded-3xl p-4 shadow-xl flex flex-col w-full max-w-6xl gap-4">
       {/* Top Row: Main Filters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-        
+
         <div className="flex items-center px-2 md:px-4 py-2 w-full">
           <HomeIcon className="text-gray-400 mr-2" />
           <div className="flex flex-col items-start w-full">
@@ -32,9 +32,7 @@ export default function FilterBar({ filters, onFilterChange, onSearch }: FilterB
             >
               <option value="">أي نوع</option>
               <option value="APARTMENT">شقة</option>
-              <option value="VILLA">فيلا</option>
-              <option value="HOUSE">منزل</option>
-              <option value="COMMERCIAL">تجاري</option>
+              <option value="COMMERCIAL">محل تجاري</option>
             </select>
           </div>
         </div>
@@ -93,7 +91,7 @@ export default function FilterBar({ filters, onFilterChange, onSearch }: FilterB
             <span className="text-xs font-semibold text-gray-500">الغرف</span>
             <div className="flex items-center gap-2 w-full">
               <div className="flex items-center w-1/2" title="غرف النوم">
-                 <input
+                <input
                   type="number"
                   placeholder="نوم"
                   min="0"
@@ -104,8 +102,8 @@ export default function FilterBar({ filters, onFilterChange, onSearch }: FilterB
               </div>
               <span className="text-gray-400">|</span>
               <div className="flex items-center w-1/2" title="الحمامات">
-                 <BathtubIcon className="text-gray-400 text-sm ml-1 hidden lg:block" />
-                 <input
+                <BathtubIcon className="text-gray-400 text-sm ml-1 hidden lg:block" />
+                <input
                   type="number"
                   placeholder="حمامات"
                   min="0"

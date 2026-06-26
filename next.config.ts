@@ -22,7 +22,10 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         destination: "https://backend-go-rent.vercel.app/api/:path*",
-        // destination: 'http://localhost:5000/api/:path*',
+      },
+      {
+        source: "/socket.io/:path*",
+        destination: "https://backend-go-rent.vercel.app/socket.io/:path*",
       },
     ];
   },
