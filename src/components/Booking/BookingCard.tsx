@@ -26,6 +26,8 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
         setOpen(false);
     };
 
+    const property = booking.propertyId;
+
     return (
         <>
             <Card
@@ -51,7 +53,7 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                         mb: 1.5
                     }}>
                         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: '1rem', md: '1.25rem' } }}>
-                            {booking.propertyId.title}
+                            {property?.title || "عقار غير متاح"}
                         </Typography>
                         <Chip
                             label={statusMap[booking.status]?.label}
@@ -65,9 +67,11 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
                         <LocationOnIcon sx={{ fontSize: { xs: 14, md: 16 } }} color="action" />
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                            {typeof booking.propertyId.location === "string"
-                                ? booking.propertyId.location
-                                : booking.propertyId.address || "لا يوجد عنوان"}
+                            {property
+                                ? typeof property.location === "string"
+                                    ? property.location
+                                    : property.address || "لا يوجد عنوان"
+                                : "لا يوجد عنوان"}
                         </Typography>
                     </Box>
 
@@ -121,7 +125,7 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                 <DialogTitle sx={{ fontWeight: 700 }}>تأكيد إلغاء الحجز</DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" color="text.secondary">
-                        هل أنت متأكد من إلغاء حجز <strong>{booking.propertyId.title}</strong>؟ لا يمكن التراجع عن هذا الإجراء.
+                        هل أنت متأكد من إلغاء حجز <strong>{property?.title || "عقار غير متاح"}</strong>؟ لا يمكن التراجع عن هذا الإجراء.
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>

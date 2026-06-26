@@ -1,11 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Box, Typography, Paper, Grid, Button } from '@mui/material';
+import { Box, Typography, Paper, Grid, Button, Skeleton } from '@mui/material';
+import Link from 'next/link';
 import { useAuth } from '../../../hooks/useAuth';
+import { useAdminReport } from '../../../hooks/useAdminReport';
 
 export default function AdminDashboardOverview() {
   const { user } = useAuth();
+  const { report, isLoading } = useAdminReport();
 
   return (
     <Box>
@@ -18,19 +21,37 @@ export default function AdminDashboardOverview() {
         <Grid size={{ xs: 12, sm: 4 }}>
           <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 2, border: '1px solid #eaeaea', boxShadow: 'none' }}>
             <Typography variant="h6" color="text.secondary">إجمالي المستخدمين</Typography>
-            <Typography variant="h3" color="primary" sx={{ mt: 1, fontWeight: 'bold' }}>0</Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={60} height={48} sx={{ mx: 'auto', mt: 1 }} />
+            ) : (
+              <Typography variant="h3" color="primary" sx={{ mt: 1, fontWeight: 'bold' }}>
+                {report?.totalUsers ?? 0}
+              </Typography>
+            )}
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
           <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 2, border: '1px solid #eaeaea', boxShadow: 'none' }}>
             <Typography variant="h6" color="text.secondary">إجمالي العقارات</Typography>
-            <Typography variant="h3" color="success.main" sx={{ mt: 1, fontWeight: 'bold' }}>0</Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={60} height={48} sx={{ mx: 'auto', mt: 1 }} />
+            ) : (
+              <Typography variant="h3" color="success.main" sx={{ mt: 1, fontWeight: 'bold' }}>
+                {report?.totalProperties ?? 0}
+              </Typography>
+            )}
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
           <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 2, border: '1px solid #eaeaea', boxShadow: 'none' }}>
             <Typography variant="h6" color="text.secondary">النزاعات المفتوحة</Typography>
-            <Typography variant="h3" color="warning.main" sx={{ mt: 1, fontWeight: 'bold' }}>0</Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={60} height={48} sx={{ mx: 'auto', mt: 1 }} />
+            ) : (
+              <Typography variant="h3" color="warning.main" sx={{ mt: 1, fontWeight: 'bold' }}>
+                {report?.openDisputes ?? 0}
+              </Typography>
+            )}
           </Paper>
         </Grid>
 
@@ -43,7 +64,13 @@ export default function AdminDashboardOverview() {
             <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 3 }}>
               من هنا يمكنك إدارة جميع المستخدمين، ومراجعة العقارات، وحل النزاعات بين المؤجرين والمستأجرين.
             </Typography>
-            <Button variant="contained" size="large" sx={{ px: 4, py: 1.5, borderRadius: 2 }}>
+            <Button
+              variant="contained"
+              size="large"
+              component={Link}
+              href="/dashboard/admin/reports"
+              sx={{ px: 4, py: 1.5, borderRadius: 2 }}
+            >
               عرض التقارير
             </Button>
           </Paper>

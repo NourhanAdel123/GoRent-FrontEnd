@@ -135,7 +135,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         >
           {drawerContent}
         </Drawer>
-        
+
         {/* Desktop Drawer */}
         <Drawer
           anchor="right"

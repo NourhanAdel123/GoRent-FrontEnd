@@ -15,7 +15,6 @@ import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutlined';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { User } from '../../types/user';
 
 export type TabType = 'profile' | 'bookings' | 'contracts' | 'messages' | 'reviews' | 'settings';
@@ -50,16 +49,9 @@ export default function ProfileSidebar({ user, activeTab, onTabChange, onLogout 
       {/* User Info - Desktop only */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', p: 4 }}>
         <Box sx={{ position: 'relative' }}>
-          <Avatar sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem' }}>
+          <Avatar src={user.profileImage} sx={{ width: 100, height: 100, mb: 2, bgcolor: 'primary.main', fontSize: '2rem' }}>
             {user.name ? user.name[0].toUpperCase() : 'U'}
           </Avatar>
-          <Box sx={{
-            position: 'absolute', bottom: 16, right: -4,
-            bgcolor: 'background.paper', borderRadius: '50%',
-            p: 0.5, boxShadow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <CameraAltIcon color="primary" sx={{ fontSize: 18 }} />
-          </Box>
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{user.name}</Typography>
         <Typography variant="body2" color="text.secondary">مستأجر</Typography>
@@ -74,16 +66,10 @@ export default function ProfileSidebar({ user, activeTab, onTabChange, onLogout 
         py: 1.5,
       }}>
         <Box sx={{ position: 'relative', flexShrink: 0 }}>
-          <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: '1rem' }}>
+          <Avatar src={user.profileImage} sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: '1rem' }}>
             {user.name ? user.name[0].toUpperCase() : 'U'}
           </Avatar>
-          <Box sx={{
-            position: 'absolute', bottom: -2, right: -4,
-            bgcolor: 'background.paper', borderRadius: '50%',
-            p: 0.3, boxShadow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <CameraAltIcon color="primary" sx={{ fontSize: 10 }} />
-          </Box>
+
         </Box>
         <Box>
           <Typography variant="body2" sx={{ fontWeight: 'bold', lineHeight: 1.2 }}>{user.name}</Typography>

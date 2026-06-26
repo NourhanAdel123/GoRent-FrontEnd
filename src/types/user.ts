@@ -3,7 +3,7 @@ export interface User {
   name: string;
   email: string;
   role: "tenant" | "owner" | "admin" | "superadmin";
-  avatar?: string;
+  profileImage?: string;
   phone?: string;
   createdAt?: string;
   updatedAt?: string;
