@@ -7,10 +7,11 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Booking } from "../../types/booking";
 
 const statusMap = {
+    PENDING_OWNER_APPROVAL: { label: "في انتظار موافقة المالك", color: "warning" as const },
+    REJECTED: { label: "مرفوض", color: "error" as const },
     PENDING_PAYMENT: { label: "في انتظار الدفع", color: "warning" as const },
-    CONFIRMED: { label: "مؤكد", color: "success" as const },
+    RESERVED: { label: "محجوز", color: "success" as const },
     CANCELLED: { label: "ملغي", color: "error" as const },
-    COMPLETED: { label: "مكتمل", color: "default" as const },
 };
 
 interface BookingCardProps {
@@ -94,10 +95,10 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                         borderColor: "divider"
                     }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main", fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            {booking.amountPaid.toLocaleString()} ج.م / شهر
+                            {new Date(booking.startDate).toLocaleDateString("ar-EG")} — {new Date(booking.endDate).toLocaleDateString("ar-EG")}
                         </Typography>
 
-                        {booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && (
+                        {booking.status !== "CANCELLED" && booking.status !== "REJECTED" && booking.status !== "RESERVED" && (
                             <Button
                                 variant="contained"
                                 color="error"
