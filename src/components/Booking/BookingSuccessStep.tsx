@@ -38,15 +38,15 @@ export default function BookingSuccessStep({
         <span className="font-mono text-gray-800 text-xs">{booking._id}</span>
       </p>
 
-      <p className="text-gray-500 text-sm mb-1">
+      {/* <p className="text-gray-500 text-sm mb-1">
         المبلغ المدفوع:{" "}
         <span className="font-bold text-gray-800">
           {booking.amountPaid.toLocaleString("ar-EG")} ج.م
         </span>
-      </p>
+      </p> */}
 
       <div className="inline-block mt-3 px-3 py-1 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold rounded-full">
-        في انتظار الدفع
+        في انتظار موافقة المالك
       </div>
 
       <button
