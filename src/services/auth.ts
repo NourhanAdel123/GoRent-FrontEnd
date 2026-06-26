@@ -5,7 +5,7 @@ import {
   AuthResponse,
 } from "../types/user";
 
-const API_URL = "";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 // Helper function for API calls
 export async function fetchApi<T>(
