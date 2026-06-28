@@ -14,7 +14,6 @@ import ChatNavBadge from '../../../components/chat/ChatNavBadge';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import DescriptionIcon from '@mui/icons-material/Description';
 import MessageIcon from '@mui/icons-material/Message';
 import InsightsIcon from '@mui/icons-material/Insights';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -44,7 +43,6 @@ export default function OwnerDashboardLayout({ children }: { children: React.Rea
     ) },
     { title: 'العقارات', path: '/dashboard/owner/properties', icon: <HomeWorkIcon /> },
     { title: 'الحجوزات', path: '/dashboard/owner/bookings', icon: <EventNoteIcon /> },
-    { title: 'العقود', path: '/dashboard/owner/contracts', icon: <DescriptionIcon /> },
     { title: 'الرسائل', path: '/dashboard/owner/messages', icon: <MessageIcon />, badge: true },
     { title: 'التحليلات', path: '/dashboard/owner/analytics', icon: <InsightsIcon /> },
   ];
