@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -13,18 +12,53 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
 import NotificationMenu from "./NotificationMenu";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-
+import { useColorMode } from "../../lib/ColorModeContext";
 
 const pages = [
   { name: "عن الشركة", path: "/about" },
   { name: "تواصل معنا", path: "/contact" },
 ];
+
+// Maps a user role to its dashboard route. Returns "" for roles with no
+// dedicated dashboard (tenant goes to the public profile page instead).
+function getDashboardPath(role?: string): string {
+  switch (role) {
+    case "owner":
+      return "/dashboard/owner";
+    case "admin":
+      return "/dashboard/admin";
+    // NOTE: no /dashboard/superadmin route exists yet in the app directory.
+    // Add it before re-enabling this case, otherwise it will 404.
+    // case "superadmin":
+    //   return "/dashboard/superadmin";
+    default:
+      return "/Profile";
+  }
+}
+
+function ThemeToggle() {
+  const { mode, toggleColorMode } = useColorMode();
+  return (
+    <Tooltip title={mode === "light" ? "تفعيل الوضع الليلي" : "تفعيل الوضع النهاري"}>
+      <IconButton
+        onClick={toggleColorMode}
+        color="inherit"
+        aria-label="toggle color mode"
+      >
+        {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+      </IconButton>
+    </Tooltip>
+  );
+}
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -40,7 +74,7 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="sticky" color="default" elevation={1}>
+    <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
@@ -51,7 +85,7 @@ export default function Navbar() {
               alt="GoRent"
               height={32}
               width={96}
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: "contain" }}
             />
           </Box>
 
@@ -99,7 +133,7 @@ export default function Navbar() {
               alt="GoRent"
               height={28}
               width={84}
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: "contain" }}
             />
           </Box>
 
@@ -118,29 +152,19 @@ export default function Navbar() {
             ))}
           </Box>
 
-          {/* Auth section */}
-          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+          {/* Right side: theme toggle + auth section */}
+          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center", gap: 1 }}>
+            <ThemeToggle />
+
             {isAuthenticated && user ? (
               <>
                 <NotificationMenu />
                 <Tooltip
-                  title={
-                    user?.role === "owner" ? "لوحة تحكم المالك" : "الملف الشخصي"
-                  }
+                  title={user?.role === "owner" ? "لوحة تحكم المالك" : "الملف الشخصي"}
                 >
                   <IconButton
                     component={Link}
-                    href={
-                      user?.role === "tenant"
-                        ? "/Profile"
-                        : user.role === "owner"
-                          ? "/dashboard/owner"
-                          : user.role === "admin"
-                            ? "/dashboard/admin"
-                            : user.role === "superadmin"
-                              ? "/dashboard/superadmin"
-                              : ""
-                    }
+                    href={getDashboardPath(user?.role)}
                     sx={{ p: 0 }}
                   >
                     <Avatar
@@ -149,7 +173,10 @@ export default function Navbar() {
                         bgcolor: "primary.main",
                         border: "2px solid",
                         borderColor: "primary.main",
-                        boxShadow: "0px 2px 8px rgba(0,0,0,0.15)",
+                        boxShadow: (theme) =>
+                          theme.palette.mode === "light"
+                            ? "0px 2px 8px rgba(15, 23, 42, 0.15)"
+                            : "0px 2px 8px rgba(0, 0, 0, 0.4)",
                       }}
                     >
                       {!user.profileImage && (user.name ? user.name[0].toUpperCase() : "U")}

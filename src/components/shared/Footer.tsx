@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -7,10 +8,45 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { Home, Copyright as CopyrightIcon } from '@mui/icons-material';
 
+// Small reusable footer link — avoids repeating the Link + Typography + hover
+// pattern for every single item below.
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Typography
+      component={NextLink}
+      href={href}
+      variant="body2"
+      color="text.secondary"
+      sx={{
+        textDecoration: 'none',
+        transition: 'color 0.15s ease',
+        '&:hover': { color: 'primary.main' },
+      }}
+    >
+      {children}
+    </Typography>
+  );
+}
+
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+  const handleSubscribe = () => {
+    if (!isValidEmail(email)) {
+      setStatus('error');
+      return;
+    }
+    // TODO: wire to a real newsletter endpoint/service when one exists.
+    setStatus('success');
+    setEmail('');
+  };
+
   return (
     <Box
       component="footer"
@@ -43,21 +79,11 @@ export default function Footer() {
               الروابط السريعة
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/about" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  عن الشركة
-                </Typography>
-              </Link>
-              <Link href="/how-it-works" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  كيف يعمل goRent
-                </Typography>
-              </Link>
-              <Link href="/faq" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  الأسئلة الشائعة
-                </Typography>
-              </Link>
+              <FooterLink href="/about">عن الشركة</FooterLink>
+              {/* These three routes don't exist yet under app/ — create the pages
+                  before launch, or temporarily remove the links to avoid 404s. */}
+              <FooterLink href="/how-it-works">كيف يعمل goRent</FooterLink>
+              <FooterLink href="/faq">الأسئلة الشائعة</FooterLink>
             </Box>
           </Grid>
 
@@ -66,21 +92,9 @@ export default function Footer() {
               الدعم الفني
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/help" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  مركز المساعدة
-                </Typography>
-              </Link>
-              <Link href="/contact" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  اتصل بنا
-                </Typography>
-              </Link>
-              <Link href="/terms" style={{ textDecoration: 'none' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ '&:hover': { color: 'primary.main' } }}>
-                  شروط الاستخدام
-                </Typography>
-              </Link>
+              <FooterLink href="/help">مركز المساعدة</FooterLink>
+              <FooterLink href="/contact">اتصل بنا</FooterLink>
+              <FooterLink href="/terms">شروط الاستخدام</FooterLink>
             </Box>
           </Grid>
 
@@ -93,12 +107,30 @@ export default function Footer() {
                 size="small"
                 placeholder="البريد الإلكتروني"
                 variant="outlined"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (status !== 'idle') setStatus('idle');
+                }}
+                error={status === 'error'}
+                helperText={status === 'error' ? 'بريد إلكتروني غير صحيح' : ' '}
                 sx={{ flexGrow: 1, backgroundColor: 'background.default' }}
               />
-              <Button variant="contained" color="primary" sx={{ whiteSpace: 'nowrap' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubscribe}
+                sx={{ whiteSpace: 'nowrap', height: 40 }}
+              >
                 اشتراك
               </Button>
             </Box>
+            {status === 'success' && (
+              <Typography variant="caption" color="success.main">
+                تم الاشتراك بنجاح ✓
+              </Typography>
+            )}
           </Grid>
 
         </Grid>
