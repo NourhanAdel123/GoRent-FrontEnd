@@ -18,6 +18,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import EmailIcon from '@mui/icons-material/Email';
 
 const drawerWidth = 260;
 
@@ -40,6 +41,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         <NotificationsIcon />
       </Badge>
     ) },
+    { title: 'رسائل التواصل', path: '/dashboard/admin/messages', icon: <EmailIcon /> },
     { title: 'المستخدمين', path: '/dashboard/admin/users', icon: <PeopleIcon /> },
     { title: 'العقارات', path: '/dashboard/admin/properties', icon: <HomeWorkIcon /> },
     { title: 'التقييمات', path: '/dashboard/admin/reviews', icon: <ReviewsIcon /> },
