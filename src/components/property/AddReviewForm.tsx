@@ -29,7 +29,7 @@ export default function AddReviewForm({ propertyId, onReviewAdded }: AddReviewFo
     try {
       setLoading(true);
       setError(null);
-      
+
       const payload: CreateReviewPayload = {
         targetType: 'PROPERTY',
         propertyId,
@@ -38,12 +38,12 @@ export default function AddReviewForm({ propertyId, onReviewAdded }: AddReviewFo
       };
 
       await reviewService.createReview(payload);
-      
+
       setSuccess(true);
       setRating(0);
       setComment('');
       onReviewAdded();
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setSuccess(false);
@@ -56,23 +56,32 @@ export default function AddReviewForm({ propertyId, onReviewAdded }: AddReviewFo
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, mb: 4, p: 3, bgcolor: '#f9fafb', borderRadius: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#1f2937' }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        mt: 3,
+        mb: 4,
+        p: 3,
+        bgcolor: 'background.default',
+        borderRadius: (theme) => theme.shape.borderRadius,
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'text.primary' }}>
         أضف تقييمك
       </Typography>
-      
+
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>تمت إضافة التقييم بنجاح</Alert>}
-      
+
       <Box sx={{ mb: 2 }}>
-        <Typography component="legend" sx={{ mb: 1, color: '#4b5563' }}>التقييم</Typography>
+        <Typography component="legend" sx={{ mb: 1, color: 'text.secondary' }}>التقييم</Typography>
         <Rating
           name="property-rating"
           value={rating}
           onChange={(event, newValue) => {
             setRating(newValue);
           }}
-          sx={{ color: '#fbc02d' }}
         />
       </Box>
 
@@ -84,18 +93,13 @@ export default function AddReviewForm({ propertyId, onReviewAdded }: AddReviewFo
         placeholder="اكتب تقييمك هنا..."
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        sx={{ mb: 2, bgcolor: 'white' }}
+        sx={{ mb: 2, bgcolor: 'background.paper' }}
       />
 
-      <Button 
-        type="submit" 
-        variant="contained" 
+      <Button
+        type="submit"
+        variant="contained"
         disabled={loading}
-        sx={{ 
-          bgcolor: '#86c5da', 
-          color: 'white', 
-          '&:hover': { bgcolor: '#6ab0c7' } 
-        }}
       >
         {loading ? <CircularProgress size={24} color="inherit" /> : 'إرسال التقييم'}
       </Button>

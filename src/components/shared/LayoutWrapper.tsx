@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import Box from '@mui/material/Box';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -15,21 +16,21 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
 
   if (isDashboard) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
         <main style={{ flexGrow: 1 }}>
           {children}
         </main>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <main style={{ flexGrow: 1 }}>
         {children}
       </main>
       <Footer />
-    </div>
+    </Box>
   );
 }
