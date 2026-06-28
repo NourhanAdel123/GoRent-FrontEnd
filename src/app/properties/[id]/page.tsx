@@ -8,7 +8,8 @@ import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
+import Skeleton from '@mui/material/Skeleton';
+import Paper from '@mui/material/Paper';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PropertyHero from '@/components/property/PropertyHero';
@@ -17,6 +18,16 @@ import PropertyContact from '@/components/property/PropertyContact';
 import PropertyReviews from '@/components/property/PropertyReviews';
 
 const PropertyMap = dynamic(() => import("@/components/home/PropertyMap"), { ssr: false });
+
+// Shared entrance animation for content sections — keeps every block
+// consistent without repeating the same sx object everywhere.
+const fadeInUp = {
+  '@keyframes fadeInUp': {
+    from: { opacity: 0, transform: 'translateY(16px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+  },
+  animation: 'fadeInUp 0.5s ease-out both',
+};
 
 export default function PropertyDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -41,8 +52,23 @@ export default function PropertyDetailsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <CircularProgress size={48} />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 10 }}>
+        <Skeleton variant="rectangular" sx={{ width: '100%', height: { xs: 320, md: 480 } }} />
+        <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 3 }, mt: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 6 }}>
+            <Box sx={{ width: '100%', flex: { lg: 2 } }}>
+              <Skeleton variant="rounded" height={80} sx={{ mb: 4, borderRadius: 3 }} />
+              <Skeleton variant="text" width="40%" height={40} sx={{ mb: 1 }} />
+              <Skeleton variant="text" width="100%" />
+              <Skeleton variant="text" width="95%" />
+              <Skeleton variant="text" width="80%" sx={{ mb: 4 }} />
+              <Skeleton variant="rounded" height={400} sx={{ borderRadius: 3 }} />
+            </Box>
+            <Box sx={{ width: '100%', flex: { lg: 1 } }}>
+              <Skeleton variant="rounded" height={320} sx={{ borderRadius: 3 }} />
+            </Box>
+          </Box>
+        </Box>
       </Box>
     );
   }
@@ -97,11 +123,11 @@ export default function PropertyDetailsPage() {
       <PropertyHero property={property} />
 
       {/* Main Content */}
-      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 3 }, mt: 6 }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 3 }, mt: { xs: 4, md: 6 } }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 6 }}>
 
           {/* Right Column: Details (RTL so flex: 2 is on the right) */}
-          <Box sx={{ width: '100%', flex: { lg: 2 } }}>
+          <Box sx={{ width: '100%', flex: { lg: 2 }, ...fadeInUp }}>
 
             {/* Key Features Bar */}
             <PropertyFeatures property={property} />
@@ -115,8 +141,9 @@ export default function PropertyDetailsPage() {
                 variant="body1"
                 sx={{
                   color: 'text.secondary',
-                  lineHeight: 1.8,
+                  lineHeight: 1.9,
                   whiteSpace: 'pre-line',
+                  fontSize: '1.02rem',
                 }}
               >
                 {property.description}
@@ -129,18 +156,32 @@ export default function PropertyDetailsPage() {
                 الموقع
               </Typography>
               {property.location?.coordinates?.length >= 2 ? (
-                <Box sx={{ height: 400, width: '100%', borderRadius: 2, overflow: 'hidden', border: '1px solid', borderColor: 'divider' }}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    height: 400,
+                    width: '100%',
+                    borderRadius: 4,
+                    overflow: 'hidden',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    boxShadow: (theme) =>
+                      theme.palette.mode === 'light'
+                        ? '0 8px 24px rgba(15, 23, 42, 0.08)'
+                        : '0 8px 24px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
                   <PropertyMap
                     properties={[property]}
                     searchCenter={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
                   />
-                </Box>
+                </Paper>
               ) : (
                 <Box
                   sx={{
-                    bgcolor: 'background.default',
+                    bgcolor: 'background.paper',
                     p: 4,
-                    borderRadius: 2,
+                    borderRadius: 4,
                     textAlign: 'center',
                     color: 'text.secondary',
                     border: '1px dashed',
@@ -164,8 +205,18 @@ export default function PropertyDetailsPage() {
 
           </Box>
 
-          {/* Left Column: Sidebar Contact */}
-          <Box sx={{ width: '100%', flex: { lg: 1 } }}>
+          {/* Left Column: Sidebar Contact — sticky so it stays in view while scrolling */}
+          <Box
+            sx={{
+              width: '100%',
+              flex: { lg: 1 },
+              ...fadeInUp,
+              animationDelay: '0.1s',
+              alignSelf: 'flex-start',
+              position: { lg: 'sticky' },
+              top: { lg: 96 },
+            }}
+          >
             <PropertyContact property={property} />
           </Box>
 

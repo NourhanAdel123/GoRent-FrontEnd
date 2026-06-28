@@ -8,6 +8,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import { Property } from '@/types/property';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -20,9 +21,12 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const images = property.images && property.images.length > 0
+  // FIX: previously fell back to a plain string when there were no images,
+  // which broke `images.length` and `images[currentIndex]` (string indexing
+  // instead of array indexing). Now always an array, same intent.
+  const images: string[] = property.images && property.images.length > 0
     ? property.images
-    : ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=2000&q=80'];
+    : ["/no-image-available.jpeg"];
 
   // Translate type to Arabic
   const propertyTypeMap: Record<string, string> = {
@@ -40,7 +44,17 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
   };
 
   return (
-    <Box sx={{ width: '100%', bgcolor: 'background.default', pt: 6 }}>
+    <Box
+      sx={{
+        width: '100%',
+        bgcolor: 'background.default',
+        pt: 6,
+        '@keyframes fadeInUp': {
+          from: { opacity: 0, transform: 'translateY(16px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+      }}
+    >
       <Box sx={{ maxWidth: 1152, mx: 'auto', px: { xs: 2, md: 3 } }}>
 
         {/* Header / Top Info */}
@@ -54,9 +68,16 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
               borderColor: 'divider',
               px: 2,
               py: 1,
-              borderRadius: 1,
+              borderRadius: 50,
               boxShadow: 1,
-              '&:hover': { bgcolor: 'background.paper', color: 'text.primary' }
+              fontWeight: 600,
+              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+              '&:hover': {
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                boxShadow: 3,
+                transform: 'translateX(2px)',
+              },
             }}
             variant="outlined"
           >
@@ -64,15 +85,16 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
           </Button>
           <Box
             sx={{
-              bgcolor: 'info.light',
-              color: 'info.dark',
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+              color: 'primary.main',
               border: '1px solid',
-              borderColor: 'info.light',
-              px: 2,
-              py: 0.75,
-              borderRadius: '50px',
+              borderColor: (theme) => alpha(theme.palette.primary.main, 0.3),
+              px: 2.5,
+              py: 0.85,
+              borderRadius: 50,
               fontSize: '0.875rem',
-              fontWeight: 'bold',
+              fontWeight: 700,
+              letterSpacing: 0.3,
             }}
           >
             {typeAr}
@@ -80,14 +102,33 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
         </Box>
 
         {/* Title & Price Section */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'flex-start', md: 'flex-end' }, justifyContent: 'space-between', gap: 2, mb: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: { xs: 'flex-start', md: 'flex-end' },
+            justifyContent: 'space-between',
+            gap: 2,
+            mb: 4,
+            animation: 'fadeInUp 0.5s ease-out both',
+          }}
+        >
           <Box>
-            <Typography variant="h3" sx={{ color: 'text.primary', mb: 0.5, fontSize: { xs: '2rem', md: '2.5rem' } }}>
+            <Typography
+              variant="h3"
+              sx={{
+                color: 'text.primary',
+                mb: 0.75,
+                fontWeight: 800,
+                fontSize: { xs: '2rem', md: '2.75rem' },
+                letterSpacing: '-0.5px',
+              }}
+            >
               {property.title}
             </Typography>
             {property.location?.coordinates?.length >= 2 && (
               <Typography sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 500 }}>
-                <LocationOnIcon sx={{ fontSize: 20 }} />
+                <LocationOnIcon sx={{ fontSize: 20, color: 'primary.main' }} />
                 إحداثيات الموقع: {property.location.coordinates[0]}, {property.location.coordinates[1]}
               </Typography>
             )}
@@ -97,19 +138,24 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
               bgcolor: 'background.paper',
               border: '1px solid',
               borderColor: 'divider',
-              p: 2,
-              borderRadius: 2,
-              boxShadow: 1,
-              minWidth: 200,
+              borderInlineStart: '4px solid',
+              borderInlineStartColor: 'primary.main',
+              p: 2.25,
+              borderRadius: 3,
+              boxShadow: (theme) =>
+                theme.palette.mode === 'light'
+                  ? '0 8px 24px rgba(15, 23, 42, 0.1)'
+                  : '0 8px 24px rgba(0, 0, 0, 0.5)',
+              minWidth: 220,
               textAlign: 'start',
             }}
           >
-            <Typography sx={{ color: 'text.secondary', fontSize: '0.875rem', mb: 0.5, textTransform: 'uppercase', fontWeight: 600 }}>
+            <Typography sx={{ color: 'text.secondary', fontSize: '0.8rem', mb: 0.5, textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5 }}>
               الإيجار الشهري
             </Typography>
-            <Typography sx={{ color: 'info.main', fontSize: '1.875rem', fontWeight: 'bold' }}>
+            <Typography sx={{ color: 'primary.main', fontSize: '2rem', fontWeight: 800, lineHeight: 1.1 }}>
               {property.pricePerMonth.toLocaleString()}{' '}
-              <Typography component="span" sx={{ fontSize: '1.25rem', color: 'text.secondary', fontWeight: 500 }}>
+              <Typography component="span" sx={{ fontSize: '1.1rem', color: 'text.secondary', fontWeight: 600 }}>
                 ج.م
               </Typography>
             </Typography>
@@ -123,10 +169,14 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
             position: 'relative',
             width: '100%',
             aspectRatio: { xs: '4/3', md: '21/9' },
-            borderRadius: 3,
+            borderRadius: 4,
             overflow: 'hidden',
-            boxShadow: 8,
+            boxShadow: (theme) =>
+              theme.palette.mode === 'light'
+                ? '0 20px 50px rgba(15, 23, 42, 0.18)'
+                : '0 20px 50px rgba(0, 0, 0, 0.6)',
             bgcolor: 'background.default',
+            animation: 'fadeInUp 0.6s ease-out both',
           }}
         >
           <Image
@@ -136,6 +186,38 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
             className="object-cover transition-opacity duration-300"
             priority
           />
+
+          {/* Bottom gradient for depth + legibility of the counter badge */}
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.45) 100%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* Image counter */}
+          {images.length > 1 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 20,
+                insetInlineStart: 20,
+                bgcolor: 'rgba(0,0,0,0.55)',
+                color: 'white',
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 50,
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                backdropFilter: 'blur(6px)',
+                zIndex: 10,
+              }}
+            >
+              {currentIndex + 1} / {images.length}
+            </Box>
+          )}
 
           {/* Navigation Arrows */}
           {images.length > 1 && (
@@ -151,17 +233,17 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
                   left: 16,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  bgcolor: 'rgba(255, 255, 255, 0.9)',
+                  bgcolor: (theme) => alpha(theme.palette.background.paper, 0.9),
                   color: 'text.primary',
                   p: 1.5,
                   borderRadius: '50%',
                   boxShadow: 4,
                   backdropFilter: 'blur(4px)',
                   opacity: { xs: 1, md: 0 },
-                  transition: 'opacity 0.2s',
+                  transition: 'opacity 0.2s, transform 0.15s',
                   cursor: 'pointer',
                   '.group:hover &': { opacity: 1 },
-                  '&:hover': { bgcolor: '#ffffff' },
+                  '&:hover': { bgcolor: 'background.paper', transform: 'translateY(-50%) scale(1.08)' },
                   zIndex: 10,
                 }}
               >
@@ -179,17 +261,17 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
                   right: 16,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  bgcolor: 'rgba(255, 255, 255, 0.9)',
+                  bgcolor: (theme) => alpha(theme.palette.background.paper, 0.9),
                   color: 'text.primary',
                   p: 1.5,
                   borderRadius: '50%',
                   boxShadow: 4,
                   backdropFilter: 'blur(4px)',
                   opacity: { xs: 1, md: 0 },
-                  transition: 'opacity 0.2s',
+                  transition: 'opacity 0.2s, transform 0.15s',
                   cursor: 'pointer',
                   '.group:hover &': { opacity: 1 },
-                  '&:hover': { bgcolor: '#ffffff' },
+                  '&:hover': { bgcolor: 'background.paper', transform: 'translateY(-50%) scale(1.08)' },
                   zIndex: 10,
                 }}
               >
@@ -209,7 +291,7 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
                       boxShadow: 2,
                       cursor: 'pointer',
                       width: idx === currentIndex ? 32 : 10,
-                      bgcolor: idx === currentIndex ? 'secondary.main' : 'rgba(161, 161, 170, 0.8)',
+                      bgcolor: idx === currentIndex ? 'secondary.main' : 'rgba(255, 255, 255, 0.7)',
                       '&:hover': { bgcolor: idx === currentIndex ? 'secondary.main' : '#ffffff' },
                     }}
                   />
@@ -229,7 +311,7 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
               overflowX: 'auto',
               pb: 2,
               scrollbarWidth: 'none',
-              '&::-webkitScrollbar': { display: 'none' },
+              '&::-webkit-scrollbar': { display: 'none' },
             }}
           >
             {images.map((img, idx) => (
@@ -241,17 +323,17 @@ export default function PropertyHero({ property }: PropertyHeroProps) {
                   width: 112,
                   height: 112,
                   flexShrink: 0,
-                  borderRadius: 2,
+                  borderRadius: 2.5,
                   overflow: 'hidden',
                   transition: 'all 0.2s',
                   cursor: 'pointer',
-                  opacity: idx === currentIndex ? 1 : 0.7,
+                  opacity: idx === currentIndex ? 1 : 0.65,
                   outline: idx === currentIndex ? '3px solid' : 'none',
-                  outlineColor: 'secondary.light',
+                  outlineColor: 'primary.main',
                   outlineOffset: 2,
                   border: idx === currentIndex ? 'none' : '1px solid',
                   borderColor: 'divider',
-                  '&:hover': { opacity: 1 },
+                  '&:hover': { opacity: 1, transform: 'translateY(-2px)' },
                 }}
               >
                 <Image src={img} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" />

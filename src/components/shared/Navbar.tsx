@@ -13,20 +13,29 @@ import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-// import DarkModeIcon from "@mui/icons-material/DarkMode";
-// import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
 import NotificationMenu from "./NotificationMenu";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-// import { useColorMode } from "../../lib/ColorModeContext";
+import { useColorMode } from "../../lib/ColorModeContext";
 
 const pages = [
   { name: "عن الشركة", path: "/about" },
   { name: "تواصل معنا", path: "/contact" },
 ];
+
+// Presentation-only icon lookup for the mobile dropdown — purely visual,
+// doesn't touch the `pages` data itself.
+const pageIcons: Record<string, React.ReactNode> = {
+  "عن الشركة": <InfoOutlinedIcon fontSize="small" />,
+  "تواصل معنا": <EmailOutlinedIcon fontSize="small" />,
+};
 
 // Maps a user role to its dashboard route. Returns "" for roles with no
 // dedicated dashboard (tenant goes to the public profile page instead).
@@ -45,20 +54,20 @@ function getDashboardPath(role?: string): string {
   }
 }
 
-// function ThemeToggle() {
-//   const { mode, toggleColorMode } = useColorMode();
-//   return (
-//     <Tooltip title={mode === "light" ? "تفعيل الوضع الليلي" : "تفعيل الوضع النهاري"}>
-//       <IconButton
-//         onClick={toggleColorMode}
-//         color="inherit"
-//         aria-label="toggle color mode"
-//       >
-//         {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-//       </IconButton>
-//     </Tooltip>
-//   );
-// }
+function ThemeToggle() {
+  const { mode, toggleColorMode } = useColorMode();
+  return (
+    <Tooltip title={mode === "light" ? "تفعيل الوضع الليلي" : "تفعيل الوضع النهاري"}>
+      <IconButton
+        onClick={toggleColorMode}
+        color="inherit"
+        aria-label="toggle color mode"
+      >
+        {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+      </IconButton>
+    </Tooltip>
+  );
+}
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -76,10 +85,19 @@ export default function Navbar() {
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ position: "relative", minHeight: { xs: 64, md: 72 } }}>
 
           {/* Desktop Logo */}
-          <Box component={Link} href="/" sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+          <Box
+            component={Link}
+            href="/"
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: 2,
+              transition: "transform 0.2s ease",
+              "&:hover": { transform: "scale(1.04)" },
+            }}
+          >
             <Image
               src="/GoRent-logo.png"
               alt="GoRent"
@@ -89,8 +107,8 @@ export default function Navbar() {
             />
           </Box>
 
-          {/* Mobile Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          {/* Mobile Menu trigger */}
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="navigation menu"
@@ -98,6 +116,10 @@ export default function Navbar() {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
+              sx={{
+                transition: "background-color 0.2s ease",
+                "&:hover": { bgcolor: (theme) => `${theme.palette.primary.main}1F` },
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -109,7 +131,20 @@ export default function Navbar() {
               transformOrigin={{ vertical: "top", horizontal: "right" }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
+              slotProps={{
+                paper: {
+                  sx: {
+                    mt: 1.5,
+                    minWidth: 200,
+                    borderRadius: 3,
+                    boxShadow: (theme) =>
+                      theme.palette.mode === "light"
+                        ? "0 12px 32px rgba(15, 23, 42, 0.18)"
+                        : "0 12px 32px rgba(0, 0, 0, 0.6)",
+                    p: 0.75,
+                  },
+                },
+              }}
             >
               {pages.map((page) => (
                 <MenuItem
@@ -117,17 +152,33 @@ export default function Navbar() {
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={page.path}
+                  sx={{
+                    borderRadius: 2,
+                    gap: 1.25,
+                    py: 1.1,
+                    color: "text.primary",
+                    "&:hover": { bgcolor: (theme) => `${theme.palette.primary.main}14` },
+                  }}
                 >
-                  <Typography align="center" sx={{ color: "text.primary", textDecoration: "none" }}>
-                    {page.name}
-                  </Typography>
+                  <Box sx={{ display: "flex", color: "primary.main" }}>{pageIcons[page.name]}</Box>
+                  <Typography sx={{ fontWeight: 600 }}>{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
 
-          {/* Mobile Logo */}
-          <Box component={Link} href="/" sx={{ display: { xs: "flex", md: "none" }, flexGrow: 1, mr: 2 }}>
+          {/* Mobile Logo — absolutely centered across the full toolbar width,
+              regardless of how wide the menu icon / right-side actions are. */}
+          <Box
+            component={Link}
+            href="/"
+            sx={{
+              display: { xs: "flex", md: "none" },
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
             <Image
               src="/GoRent-logo.png"
               alt="GoRent"
@@ -138,14 +189,33 @@ export default function Navbar() {
           </Box>
 
           {/* Desktop Links */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 4 }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 4, gap: 1 }}>
             {pages.map((page) => (
               <Button
                 key={page.name}
                 component={Link}
                 href={page.path}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "text.primary", display: "block", fontWeight: 700 }}
+                sx={{
+                  my: 2,
+                  color: "text.primary",
+                  display: "block",
+                  fontWeight: 700,
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: 6,
+                    insetInlineStart: "50%",
+                    width: 0,
+                    height: 2,
+                    bgcolor: "primary.main",
+                    borderRadius: 1,
+                    transform: "translateX(-50%)",
+                    transition: "width 0.2s ease",
+                  },
+                  "&:hover::after": { width: "60%" },
+                }}
               >
                 {page.name}
               </Button>
@@ -153,7 +223,7 @@ export default function Navbar() {
           </Box>
 
           {/* Right side: theme toggle + auth section */}
-          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ flexGrow: { xs: 1, md: 0 }, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 1 }}>
             {/* <ThemeToggle /> */}
 
             {isAuthenticated && user ? (
@@ -173,10 +243,12 @@ export default function Navbar() {
                         bgcolor: "primary.main",
                         border: "2px solid",
                         borderColor: "primary.main",
+                        transition: "transform 0.15s ease",
                         boxShadow: (theme) =>
                           theme.palette.mode === "light"
                             ? "0px 2px 8px rgba(15, 23, 42, 0.15)"
                             : "0px 2px 8px rgba(0, 0, 0, 0.4)",
+                        "&:hover": { transform: "scale(1.06)" },
                       }}
                     >
                       {!user.profileImage && (user.name ? user.name[0].toUpperCase() : "U")}
@@ -190,7 +262,7 @@ export default function Navbar() {
                 color="primary"
                 component={Link}
                 href="/auth/login"
-                sx={{ borderRadius: 2 }}
+                sx={{ borderRadius: 50, px: 3, fontWeight: 700 }}
               >
                 تسجيل الدخول
               </Button>
