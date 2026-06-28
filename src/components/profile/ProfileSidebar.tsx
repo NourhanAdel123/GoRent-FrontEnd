@@ -17,7 +17,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { User } from '../../types/user';
 
-export type TabType = 'profile' | 'bookings' | 'contracts' | 'messages' | 'reviews' | 'settings';
+export type TabType = 'bookings' | 'messages' | 'settings';
 
 interface ProfileSidebarProps {
   user: User;
@@ -29,7 +29,6 @@ interface ProfileSidebarProps {
 export default function ProfileSidebar({ user, activeTab, onTabChange, onLogout }: ProfileSidebarProps) {
   const menuItems = [
     { id: 'bookings', label: 'حجوزاتي', icon: <EventAvailableIcon /> },
-    { id: 'contracts', label: 'عقودي', icon: <DescriptionOutlinedIcon /> },
     { id: 'messages', label: 'الرسائل', icon: <ChatBubbleOutlinedIcon /> },
     { id: 'reviews', label: 'التقييمات', icon: <StarOutlinedIcon /> },
     { id: 'settings', label: 'الإعدادات', icon: <SettingsOutlinedIcon /> },

@@ -41,7 +41,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         <NotificationsIcon />
       </Badge>
     ) },
-    { title: 'رسائل التواصل', path: '/dashboard/admin/messages', icon: <EmailIcon /> },
+    // { title: 'رسائل التواصل', path: '/dashboard/admin/messages', icon: <EmailIcon /> },
     { title: 'المستخدمين', path: '/dashboard/admin/users', icon: <PeopleIcon /> },
     { title: 'العقارات', path: '/dashboard/admin/properties', icon: <HomeWorkIcon /> },
     { title: 'التقييمات', path: '/dashboard/admin/reviews', icon: <ReviewsIcon /> },

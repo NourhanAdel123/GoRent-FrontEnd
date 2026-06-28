@@ -5,6 +5,7 @@ import { Box, Container } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import ProfileSidebar, { TabType } from '../../components/profile/ProfileSidebar';
 import ProfileContent from '../../components/profile/ProfileContent';
+import { ChatSocketProvider } from '../../context/ChatSocketContext';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, logout, checkAuth } = useAuth();
@@ -28,6 +29,7 @@ export default function ProfilePage() {
   }
 
   return (
+    <ChatSocketProvider enabled={isAuthenticated}>
     <Box sx={{ bgcolor: 'background.default', minHeight: 'calc(100vh - 64px)', py: 6 }}>
       <Container maxWidth="lg">
         <Box
@@ -63,5 +65,6 @@ export default function ProfilePage() {
         </Box>
       </Container>
     </Box>
+    </ChatSocketProvider>
   );
 }
