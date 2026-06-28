@@ -61,6 +61,76 @@ export interface BookingModalProps {
   onClose: () => void;
 }
 
+// --- Owner-specific types ---
+
+export type BookingStatus =
+  | "PENDING_OWNER_APPROVAL"
+  | "PENDING_PAYMENT"
+  | "RESERVED"
+  | "REJECTED"
+  | "CANCELLED";
+
+export interface OwnerBookingTenant {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+export interface OwnerBookingProperty {
+  _id: string;
+  title: string;
+}
+
+export interface OwnerBooking {
+  _id: string;
+  propertyId: OwnerBookingProperty;
+  tenantId: OwnerBookingTenant;
+  status: BookingStatus;
+  ownerAccepted: boolean;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+}
+
+export interface OwnerBookingsResponse {
+  bookings: OwnerBooking[];
+}
+
+export interface MonthlyTrendItem {
+  label: string;
+  total: number;
+  reserved: number;
+  cancelled: number;
+}
+
+export interface PerPropertyStat {
+  title: string;
+  total: number;
+  reserved: number;
+  rejected: number;
+  cancelled: number;
+  pending: number;
+}
+
+export interface OwnerAnalytics {
+  statusBreakdown: {
+    PENDING_OWNER_APPROVAL: number;
+    PENDING_PAYMENT: number;
+    RESERVED: number;
+    REJECTED: number;
+    CANCELLED: number;
+  };
+  monthlyTrend: MonthlyTrendItem[];
+  perProperty: PerPropertyStat[];
+  totals: {
+    total: number;
+    reserved: number;
+    acceptanceRate: number;
+    cancellationRate: number;
+  };
+}
+
+
 // export type BookingStatus = "PENDING_PAYMENT" | "RESERVED" | "CANCELLED";
 // 
 // export interface BookingProperty {

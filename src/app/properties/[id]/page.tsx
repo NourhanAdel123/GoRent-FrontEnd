@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { propertyService } from '@/services/property';
+import { propertyServicenorhan } from '@/services/property';
 import { Property } from '@/types/property';
 import dynamic from 'next/dynamic';
 import PropertyHero from '@/components/property/PropertyHero';
@@ -20,7 +20,7 @@ export default function PropertyDetailsPage() {
 
   useEffect(() => {
     if (id) {
-      propertyService.fetchPropertyById(id)
+      propertyServicenorhan.fetchPropertyById(id)
         .then((data) => {
           setProperty(data.property);
         })
