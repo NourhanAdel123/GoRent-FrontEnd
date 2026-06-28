@@ -42,23 +42,29 @@ export default function EditReviewForm({ review, onSaved, onCancel }: EditReview
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ mt: 1, p: 2, bgcolor: '#f0f9ff', borderRadius: 2, border: '1px solid #bae6fd' }}
+      sx={{
+        mt: 1,
+        p: 2,
+        bgcolor: 'background.paper',
+        borderRadius: 0,
+        border: '1px solid',
+        borderColor: 'divider',
+      }}
     >
-      <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: '#0369a1' }}>
+      <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, color: 'info.main' }}>
         تعديل التقييم
       </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 1.5 }}>{error}</Alert>}
 
       <Box sx={{ mb: 1.5 }}>
-        <Typography component="legend" variant="body2" sx={{ mb: 0.5, color: '#4b5563' }}>
+        <Typography component="legend" variant="body2" sx={{ mb: 0.5, color: 'text.secondary' }}>
           التقييم
         </Typography>
         <Rating
           name={`edit-rating-${review._id}`}
           value={rating}
           onChange={(_, newValue) => setRating(newValue)}
-          sx={{ color: '#fbc02d' }}
         />
       </Box>
 
@@ -70,7 +76,7 @@ export default function EditReviewForm({ review, onSaved, onCancel }: EditReview
         placeholder="اكتب تعليقك هنا..."
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        sx={{ mb: 1.5, bgcolor: 'white' }}
+        sx={{ mb: 1.5, bgcolor: 'background.paper' }}
         size="small"
       />
 
@@ -80,7 +86,6 @@ export default function EditReviewForm({ review, onSaved, onCancel }: EditReview
           variant="contained"
           disabled={loading}
           size="small"
-          sx={{ bgcolor: '#86c5da', color: 'white', '&:hover': { bgcolor: '#6ab0c7' } }}
         >
           {loading ? <CircularProgress size={18} color="inherit" /> : 'حفظ التعديل'}
         </Button>
@@ -89,7 +94,7 @@ export default function EditReviewForm({ review, onSaved, onCancel }: EditReview
           size="small"
           onClick={onCancel}
           disabled={loading}
-          sx={{ borderColor: '#d1d5db', color: '#6b7280' }}
+          sx={{ borderColor: 'divider', color: 'text.secondary' }}
         >
           إلغاء
         </Button>
