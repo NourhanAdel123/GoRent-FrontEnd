@@ -12,9 +12,7 @@ const PLACEHOLDER_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Crect fill='%23f3f4f6' width='160' height='120'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23d1d5db' font-size='11'%3Eصورة%3C/text%3E%3C/svg%3E";
 
 export default function MediaManagement({ properties }: MediaManagementProps) {
-  const previewImages = properties
-    .flatMap((p) => p.images ?? [])
-    .slice(0, 4);
+  const previewImages = properties.flatMap((p) => p.images ?? []).slice(0, 4);
 
   while (previewImages.length < 4) {
     previewImages.push(PLACEHOLDER_IMAGE);
@@ -35,7 +33,10 @@ export default function MediaManagement({ properties }: MediaManagementProps) {
               alt={`معاينة ${index + 1}`}
               fill
               className="object-cover"
-              unoptimized={src.startsWith("data:") || src.startsWith("http://localhost")}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              unoptimized={
+                src.startsWith("data:") || src.startsWith("http://localhost")
+              }
             />
           </div>
         ))}
