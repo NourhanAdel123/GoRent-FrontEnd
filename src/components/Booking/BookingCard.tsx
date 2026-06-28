@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Typography, Card, CardContent, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Box, Typography, Card, CardContent, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PaymentIcon from "@mui/icons-material/Payment";
 import { Booking } from "../../types/booking";
+import { paymentService } from "../../services/payment";
 
 const statusMap = {
+    PENDING_OWNER_APPROVAL: { label: "في انتظار موافقة المالك", color: "warning" as const },
+    REJECTED: { label: "مرفوض", color: "error" as const },
     PENDING_PAYMENT: { label: "في انتظار الدفع", color: "warning" as const },
     RESERVED: { label: "محجوز", color: "success" as const },
     CANCELLED: { label: "ملغي", color: "error" as const },
@@ -19,11 +23,27 @@ interface BookingCardProps {
 
 export default function BookingCard({ booking, onCancel }: BookingCardProps) {
     const [open, setOpen] = useState(false);
+    const [payLoading, setPayLoading] = useState(false);
+    const [payError, setPayError] = useState<string | null>(null);
 
     const handleConfirm = () => {
         onCancel(booking._id);
         setOpen(false);
     };
+
+    const handlePay = async () => {
+        try {
+            setPayLoading(true);
+            setPayError(null);
+            const data = await paymentService.initiateBookingFeePayment(booking._id);
+            window.location.href = data.paymentUrl;
+        } catch (err: unknown) {
+            setPayError(err instanceof Error ? err.message : "فشل بدء عملية الدفع");
+            setPayLoading(false);
+        }
+    };
+
+    const property = booking.propertyId;
 
     return (
         <>
@@ -50,7 +70,7 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                         mb: 1.5
                     }}>
                         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: '1rem', md: '1.25rem' } }}>
-                            {booking.propertyId.title}
+                            {property?.title || "عقار غير متاح"}
                         </Typography>
                         <Chip
                             label={statusMap[booking.status]?.label}
@@ -64,9 +84,11 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
                         <LocationOnIcon sx={{ fontSize: { xs: 14, md: 16 } }} color="action" />
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                            {typeof booking.propertyId.location === "string"
-                                ? booking.propertyId.location
-                                : booking.propertyId.address || "لا يوجد عنوان"}
+                            {property
+                                ? typeof property.location === "string"
+                                    ? property.location
+                                    : property.address || "لا يوجد عنوان"
+                                : "لا يوجد عنوان"}
                         </Typography>
                     </Box>
 
@@ -79,6 +101,13 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                         </Typography>
                     </Box>
 
+                    {/* Pay Error */}
+                    {payError && (
+                        <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+                            {payError}
+                        </Typography>
+                    )}
+
                     {/* Footer */}
                     <Box sx={{
                         display: "flex",
@@ -86,31 +115,58 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                         alignItems: "center",
                         pt: 1.5,
                         borderTop: "1px solid",
-                        borderColor: "divider"
+                        borderColor: "divider",
+                        gap: 1,
                     }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main", fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            {booking.amountPaid.toLocaleString()} ج.م / شهر
+                            {new Date(booking.startDate).toLocaleDateString("ar-EG")} — {new Date(booking.endDate).toLocaleDateString("ar-EG")}
                         </Typography>
 
-                        {booking.status !== "CANCELLED" && (
-                            <Button
-                                variant="contained"
-                                color="error"
-                                size="small"
-                                onClick={() => setOpen(true)}
-                                sx={{
-                                    borderRadius: 2,
-                                    textTransform: "none",
-                                    fontWeight: 600,
-                                    px: { xs: 1.5, md: 2 },
-                                    fontSize: { xs: '0.75rem', md: '0.875rem' },
-                                    boxShadow: "none",
-                                    "&:hover": { boxShadow: "none" },
-                                }}
-                            >
-                                إلغاء الحجز
-                            </Button>
-                        )}
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            {/* Pay Button */}
+                            {booking.status === "PENDING_PAYMENT" && (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    size="small"
+                                    onClick={handlePay}
+                                    disabled={payLoading}
+                                    startIcon={payLoading ? <CircularProgress size={14} color="inherit" /> : <PaymentIcon fontSize="small" />}
+                                    sx={{
+                                        borderRadius: 2,
+                                        textTransform: "none",
+                                        fontWeight: 600,
+                                        px: { xs: 1.5, md: 2 },
+                                        fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                        boxShadow: "none",
+                                        "&:hover": { boxShadow: "none" },
+                                    }}
+                                >
+                                    ادفع الآن
+                                </Button>
+                            )}
+
+                            {/* Cancel Button */}
+                            {booking.status !== "CANCELLED" && booking.status !== "REJECTED" && booking.status !== "RESERVED" && (
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    size="small"
+                                    onClick={() => setOpen(true)}
+                                    sx={{
+                                        borderRadius: 2,
+                                        textTransform: "none",
+                                        fontWeight: 600,
+                                        px: { xs: 1.5, md: 2 },
+                                        fontSize: { xs: '0.75rem', md: '0.875rem' },
+                                        boxShadow: "none",
+                                        "&:hover": { boxShadow: "none" },
+                                    }}
+                                >
+                                    إلغاء الحجز
+                                </Button>
+                            )}
+                        </Box>
                     </Box>
                 </CardContent>
             </Card>
@@ -120,7 +176,7 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                 <DialogTitle sx={{ fontWeight: 700 }}>تأكيد إلغاء الحجز</DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" color="text.secondary">
-                        هل أنت متأكد من إلغاء حجز <strong>{booking.propertyId.title}</strong>؟ لا يمكن التراجع عن هذا الإجراء.
+                        هل أنت متأكد من إلغاء حجز <strong>{property?.title || "عقار غير متاح"}</strong>؟ لا يمكن التراجع عن هذا الإجراء.
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>

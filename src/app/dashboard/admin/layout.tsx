@@ -5,6 +5,8 @@ import { Box, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListI
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../../hooks/useAuth';
+import { useNotifications } from '../../../hooks/useNotifications';
+import { Badge, Snackbar, Alert } from '@mui/material';
 
 // Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -15,11 +17,14 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import EmailIcon from '@mui/icons-material/Email';
 
 const drawerWidth = 260;
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
+  const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -31,6 +36,12 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
 
   const menuItems = [
     { title: 'نظرة عامة', path: '/dashboard/admin', icon: <DashboardIcon /> },
+    { title: 'الإشعارات', path: '/dashboard/admin/notifications', icon: (
+      <Badge badgeContent={unreadCount} color="error">
+        <NotificationsIcon />
+      </Badge>
+    ) },
+    { title: 'رسائل التواصل', path: '/dashboard/admin/messages', icon: <EmailIcon /> },
     { title: 'المستخدمين', path: '/dashboard/admin/users', icon: <PeopleIcon /> },
     { title: 'العقارات', path: '/dashboard/admin/properties', icon: <HomeWorkIcon /> },
     { title: 'التقييمات', path: '/dashboard/admin/reviews', icon: <ReviewsIcon /> },
@@ -135,7 +146,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         >
           {drawerContent}
         </Drawer>
-        
+
         {/* Desktop Drawer */}
         <Drawer
           anchor="right"
@@ -157,6 +168,17 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       >
         {children}
       </Box>
+
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseToast} severity="info" sx={{ width: '100%' }}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

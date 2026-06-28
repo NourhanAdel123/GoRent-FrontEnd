@@ -7,7 +7,7 @@ import ProfileSidebar, { TabType } from '../../components/profile/ProfileSidebar
 import ProfileContent from '../../components/profile/ProfileContent';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, checkAuth } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('bookings');
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +58,7 @@ export default function ProfilePage() {
               width: { xs: '100%', md: 'auto' },
             }}
           >
-            <ProfileContent user={user} activeTab={activeTab} />
+            <ProfileContent user={user} activeTab={activeTab} onUpdate={checkAuth} />
           </Box>
         </Box>
       </Container>
