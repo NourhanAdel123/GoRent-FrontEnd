@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -13,8 +13,13 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormHelperText
+  FormHelperText,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Link from 'next/link';
 import { useAuth } from '../../hooks/useAuth';
 import { useSearchParams } from 'next/navigation';
@@ -24,6 +29,7 @@ import { LoginCredentials } from '../../types/user';
 export default function LoginForm() {
   const { login, isLoading, error } = useAuth();
   const searchParams = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<LoginCredentials>({
     defaultValues: {
@@ -42,7 +48,20 @@ export default function LoginForm() {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 400, mx: 'auto', mt: 8, borderRadius: 2 }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 4,
+        width: '100%',
+        maxWidth: 400,
+        mx: 'auto',
+        mt: 8,
+        borderRadius: 1.5,
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: 2
+      }}
+    >
       <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold" }} color="primary">
         تسجيل الدخول
       </Typography>
@@ -78,10 +97,26 @@ export default function LoginForm() {
           required
           fullWidth
           label="كلمة المرور"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           id="password"
           autoComplete="current-password"
           disabled={isLoading}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                    aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
           {...register('password', { required: 'كلمة المرور مطلوبة' })}
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -92,18 +127,23 @@ export default function LoginForm() {
           fullWidth
           variant="contained"
           size="large"
-          sx={{ mt: 3, mb: 2, borderRadius: 2 }}
+          sx={{ mt: 3, mb: 2, borderRadius: 1.5 }}
           disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <LoginIcon />}
         >
-          {isLoading ? <CircularProgress size={24} /> : 'دخول'}
+          دخول
         </Button>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Link href="/auth/forgot-password" style={{ textDecoration: 'none', color: '#1976d2' }}>
-            <Typography variant="body2">نسيت كلمة المرور؟</Typography>
+          <Link href="/auth/forgot-password" style={{ textDecoration: 'none' }}>
+            <Typography variant="body2" sx={{ color: 'primary.main' }}>
+              نسيت كلمة المرور؟
+            </Typography>
           </Link>
-          <Link href="/auth/register" style={{ textDecoration: 'none', color: '#1976d2' }}>
-            <Typography variant="body2">ليس لديك حساب؟ سجل الآن</Typography>
+          <Link href="/auth/register" style={{ textDecoration: 'none' }}>
+            <Typography variant="body2" sx={{ color: 'primary.main' }}>
+              ليس لديك حساب؟ سجل الآن
+            </Typography>
           </Link>
         </Box>
       </Box>

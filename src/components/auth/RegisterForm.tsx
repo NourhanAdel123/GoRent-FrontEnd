@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -13,8 +13,13 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormHelperText
+  FormHelperText,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Link from 'next/link';
 import { useAuth } from '../../hooks/useAuth';
 import { useSearchParams } from 'next/navigation';
@@ -24,6 +29,7 @@ import { RegisterCredentials } from '../../types/user';
 export default function RegisterForm() {
   const { register: registerUser, isLoading, error } = useAuth();
   const searchParams = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<RegisterCredentials>({
     defaultValues: {
@@ -44,7 +50,21 @@ export default function RegisterForm() {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 450, mx: 'auto', mt: 8, mb: 8, borderRadius: 2 }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 4,
+        width: '100%',
+        maxWidth: 450,
+        mx: 'auto',
+        mt: 8,
+        mb: 8,
+        borderRadius: 1.5,
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: 2
+      }}
+    >
       <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold" }} color="primary">
         إنشاء حساب جديد
       </Typography>
@@ -95,10 +115,26 @@ export default function RegisterForm() {
           required
           fullWidth
           label="كلمة المرور"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           id="password"
           autoComplete="new-password"
           disabled={isLoading}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                    aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
           {...register('password', {
             required: 'كلمة المرور مطلوبة',
             minLength: { value: 6, message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }
@@ -146,15 +182,18 @@ export default function RegisterForm() {
           fullWidth
           variant="contained"
           size="large"
-          sx={{ mt: 3, mb: 2, borderRadius: 2 }}
+          sx={{ mt: 3, mb: 2, borderRadius: 1.5 }}
           disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <PersonAddIcon />}
         >
-          {isLoading ? <CircularProgress size={24} /> : 'تسجيل'}
+          تسجيل
         </Button>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <Link href="/auth/login" style={{ textDecoration: 'none', color: '#1976d2' }}>
-            <Typography variant="body2">لديك حساب بالفعل؟ سجل دخولك</Typography>
+          <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+            <Typography variant="body2" sx={{ color: 'primary.main' }}>
+              لديك حساب بالفعل؟ سجل دخولك
+            </Typography>
           </Link>
         </Box>
       </Box>
