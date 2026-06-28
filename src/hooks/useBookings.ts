@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Booking } from "../types/booking";
 import { bookingService } from "../services/booking";
 
@@ -8,6 +8,7 @@ export function useBookings() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const isMounted = useRef(false);
 
     const fetchBookings = useCallback(async () => {
         try {
@@ -15,7 +16,7 @@ export function useBookings() {
             const data = await bookingService.getTenantBookings();
             setBookings(data.bookings);
         } catch {
-            setError("فشل جلب الحجوزات");
+            setError("Failed to load bookings");
         } finally {
             setIsLoading(false);
         }
@@ -26,31 +27,31 @@ export function useBookings() {
             await bookingService.cancelBooking(id);
             await fetchBookings();
         } catch {
-            setError("فشل إلغاء الحجز");
+            setError("Failed to cancel booking");
         }
     };
 
+    // Initial load
     useEffect(() => {
-        let ignore = false;
+        if (!isMounted.current) {
+            isMounted.current = true;
+            fetchBookings();
+        }
+    }, [fetchBookings]);
 
-        const load = async () => {
-            try {
-                setIsLoading(true);
-                const data = await bookingService.getTenantBookings();
-                if (!ignore) setBookings(data.bookings);
-            } catch {
-                if (!ignore) setError("فشل جلب الحجوزات");
-            } finally {
-                if (!ignore) setIsLoading(false);
+    // Refetch when user returns from Paymob payment page
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                fetchBookings();
             }
         };
 
-        load();
-
+        document.addEventListener("visibilitychange", handleVisibilityChange);
         return () => {
-            ignore = true;
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
         };
-    }, []);
+    }, [fetchBookings]);
 
     return { bookings, isLoading, error, cancelBooking, fetchBookings };
 }

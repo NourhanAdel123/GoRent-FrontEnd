@@ -6,7 +6,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { useBookings } from "../../../hooks/useBookings";
 import BookingCard from "../../Booking/BookingCard";
 
-// كومبوننت فرعي لشكلSkeleton متطور يشبه شكل الكارد الحقيقي
 function BookingSkeleton() {
     return (
         <Box
@@ -90,6 +89,15 @@ export default function BookingsTab() {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%" }}>
+            {/* Header with refresh button */}
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tooltip title="Refresh bookings">
+                    <IconButton onClick={fetchBookings} size="small">
+                        <RefreshIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+            </Box>
+
             {bookings.map((booking) => (
                 <BookingCard
                     key={booking._id}
