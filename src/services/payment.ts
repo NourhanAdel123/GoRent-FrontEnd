@@ -9,17 +9,22 @@ const validateObjectId = (id: string, label: string) => {
     }
 };
 
+export interface PaymentResponse {
+    paymentUrl: string;
+    orderId?: string;
+}
+
 export const paymentService = {
-    initiateBookingFeePayment: async (bookingId: string) => {
+    initiateBookingFeePayment: async (bookingId: string): Promise<PaymentResponse> => {
         validateObjectId(bookingId, "booking ID");
-        return fetchApi(`/api/payment/booking-fee/${bookingId}`, {
+        return fetchApi<PaymentResponse>(`/api/payment/booking-fee/${bookingId}`, {
             method: "POST",
         });
     },
 
-    initiateListingFeePayment: async (propertyId: string) => {
+    initiateListingFeePayment: async (propertyId: string): Promise<PaymentResponse> => {
         validateObjectId(propertyId, "property ID");
-        return fetchApi(`/api/payment/listing-fee/${propertyId}`, {
+        return fetchApi<PaymentResponse>(`/api/payment/listing-fee/${propertyId}`, {
             method: "POST",
         });
     },

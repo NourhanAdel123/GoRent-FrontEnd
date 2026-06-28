@@ -21,7 +21,7 @@ export interface PropertySpecifications {
 
 export interface Property {
   _id: string;
-  ownerId: string;
+  ownerId: string | { _id: string; name: string; email: string };
   type: PropertyType;
   title: string;
   description: string;
@@ -110,39 +110,7 @@ export interface PropertyFormValues {
   footTrafficTier: string;
   commercialLicenseRequired: boolean;
 }
-export interface Property {
-  _id: string;
-  title: string;
-  description: string;
-  type: "APARTMENT" | "SHOP";
-  pricePerMonth: number;
-  squareFootage: number;
-  images: string[];
-  isAvailable: boolean;
-  listingPaid: boolean; //For payment
-  status: string;
-  location: {
-    type: string;
-    coordinates: number[];
-  };
-  specifications: {
-    apartment?: {
-      bedrooms: number | null;
-      bathrooms: number | null;
-      hasElevator: boolean | null;
-    };
-    shop?: {
-      electricityCapacity: number | null;
-      footTrafficTier: string | null;
-      commercialLicenseRequired: boolean | null;
-    };
-  };
-  ownerId: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-}
+
 
 export interface PropertyCardProps {
   property: Property;

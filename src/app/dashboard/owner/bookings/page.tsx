@@ -84,7 +84,7 @@ export default function OwnerBookingsPage() {
     <Box dir="rtl" sx={{ maxWidth: 1100, mx: 'auto' }}>
       {/* Page header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }} gutterBottom>
           الحجوزات
         </Typography>
         <Typography variant="body1" color="text.secondary">
@@ -111,7 +111,7 @@ export default function OwnerBookingsPage() {
           bgcolor: 'white',
         }}
       >
-        <Stack direction="row" spacing={2} sx={{ alignitems: 'center', flexWrap: 'wrap' }}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
           <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
             تصفية حسب:
           </Typography>
@@ -229,12 +229,12 @@ export default function OwnerBookingsPage() {
                   >
                     {/* Tenant */}
                     <TableCell>
-                      <Stack direction="row" spacing={1.5} alignitems="center">
+                      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
                         <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.50', color: 'primary.main', fontSize: 14 }}>
                           {booking.tenantId?.name?.[0]?.toUpperCase() || <PersonIcon sx={{ fontSize: 18 }} />}
                         </Avatar>
                         <Box>
-                          <Typography variant="body2" fontWeight={600} noWrap>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
                             {booking.tenantId?.name || '—'}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" noWrap>
@@ -246,7 +246,7 @@ export default function OwnerBookingsPage() {
 
                     {/* Property */}
                     <TableCell>
-                      <Stack direction="row" spacing={1} alignitems="center">
+                      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                         <HomeWorkIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
                         <Typography variant="body2" noWrap sx={{ maxWidth: 180 }}>
                           {booking.propertyId?.title || '—'}

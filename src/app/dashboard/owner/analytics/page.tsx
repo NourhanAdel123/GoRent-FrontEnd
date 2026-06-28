@@ -43,7 +43,7 @@ function KpiCard({ icon, label, value, sub, color, bgColor }: KpiCardProps) {
         borderColor: 'divider',
         bgcolor: 'white',
         display: 'flex',
-        alignitems: 'flex-start',
+        alignItems: 'flex-start',
         gap: 2,
         transition: 'box-shadow 0.2s',
         '&:hover': { boxShadow: '0 4px 20px rgba(0,0,0,0.08)' },
@@ -56,7 +56,7 @@ function KpiCard({ icon, label, value, sub, color, bgColor }: KpiCardProps) {
           borderRadius: 2.5,
           bgcolor: bgColor,
           display: 'flex',
-          alignitems: 'center',
+          alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
           color,
@@ -68,7 +68,7 @@ function KpiCard({ icon, label, value, sub, color, bgColor }: KpiCardProps) {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
           {label}
         </Typography>
-        <Typography variant="h4" fontWeight="bold" sx={{ lineHeight: 1.2 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", lineHeight: 1.2 }}>
           {value}
         </Typography>
         {sub && (
@@ -90,7 +90,7 @@ function TrendChart({ data }: { data: MonthlyTrendItem[] }) {
       elevation={0}
       sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'white' }}
     >
-      <Typography variant="h6" fontWeight="bold" gutterBottom>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }} gutterBottom>
         الاتجاه الشهري للحجوزات
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -102,7 +102,7 @@ function TrendChart({ data }: { data: MonthlyTrendItem[] }) {
           <Typography color="text.disabled">لا توجد بيانات بعد</Typography>
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', alignitems: 'flex-end', gap: 1.5, height: 200 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1.5, height: 200 }}>
           {data.map((item, idx) => {
             const totalH = Math.round((item.total / max) * 160);
             const reservedH = Math.round((item.reserved / max) * 160);
@@ -124,7 +124,7 @@ function TrendChart({ data }: { data: MonthlyTrendItem[] }) {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignitems: 'center',
+                    alignItems: 'center',
                     gap: 0.5,
                     cursor: 'default',
                   }}
@@ -173,7 +173,7 @@ function TrendChart({ data }: { data: MonthlyTrendItem[] }) {
                   <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: 11 }}>
                     {item.label}
                   </Typography>
-                  <Typography variant="caption" fontWeight="bold" sx={{ fontSize: 11 }}>
+                  <Typography variant="caption" sx={{ fontWeight: "bold", fontSize: 11 }}>
                     {item.total}
                   </Typography>
                 </Box>
@@ -185,11 +185,11 @@ function TrendChart({ data }: { data: MonthlyTrendItem[] }) {
 
       {/* Legend */}
       <Stack direction="row" spacing={3} sx={{ mt: 2 }}>
-        <Stack direction="row" spacing={0.7} alignitems="center">
+        <Stack direction="row" spacing={0.7} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: '#1976d2' }} />
           <Typography variant="caption" color="text.secondary">محجوز</Typography>
         </Stack>
-        <Stack direction="row" spacing={0.7} alignitems="center">
+        <Stack direction="row" spacing={0.7} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: '#e3f2fd' }} />
           <Typography variant="caption" color="text.secondary">إجمالي</Typography>
         </Stack>
@@ -226,7 +226,7 @@ function StatusBreakdown({ breakdown, total }: StatusBreakdownProps) {
       elevation={0}
       sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'white' }}
     >
-      <Typography variant="h6" fontWeight="bold" gutterBottom>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }} gutterBottom>
         توزيع الحالات
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -239,12 +239,12 @@ function StatusBreakdown({ breakdown, total }: StatusBreakdownProps) {
           const cfg = STATUS_LABELS[status];
           return (
             <Box key={status}>
-              <Stack direction="row" sx={{ justifyContent: 'space-between', alignitems: 'center', mb: 0.5 }}>
-                <Stack direction="row" spacing={1} alignitems="center">
+              <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: cfg.color }} />
                   <Typography variant="body2">{cfg.label}</Typography>
                 </Stack>
-                <Typography variant="body2" fontWeight="bold">
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                   {count} <Typography component="span" variant="caption" color="text.secondary">({pct}%)</Typography>
                 </Typography>
               </Stack>
@@ -273,9 +273,9 @@ function PropertyTable({ data }: { data: PerPropertyStat[] }) {
       elevation={0}
       sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'white' }}
     >
-      <Stack direction="row" alignitems="center" spacing={1.5} sx={{ mb: 2.5 }}>
+      <Stack direction="row" spacing={1.5} sx={{ mb: 2.5, alignItems: "center" }}>
         <HomeWorkIcon color="primary" />
-        <Typography variant="h6" fontWeight="bold">تحليل العقارات</Typography>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>تحليل العقارات</Typography>
       </Stack>
 
       {data.length === 0 ? (
@@ -328,7 +328,7 @@ function PropertyTable({ data }: { data: PerPropertyStat[] }) {
                 return (
                   <tr key={idx}>
                     <td>
-                      <Typography variant="body2" fontWeight={600} noWrap sx={{ maxWidth: 220 }}>
+                      <Typography variant="body2" noWrap sx={{ fontWeight: 600, maxWidth: 220 }}>
                         {p.title}
                       </Typography>
                     </td>
@@ -336,7 +336,7 @@ function PropertyTable({ data }: { data: PerPropertyStat[] }) {
                       <Chip label={p.total} size="small" variant="outlined" />
                     </td>
                     <td>
-                      <Typography variant="body2" color="success.main" fontWeight={600}>{p.reserved}</Typography>
+                      <Typography variant="body2" color="success.main" sx={{ fontWeight: 600 }}>{p.reserved}</Typography>
                     </td>
                     <td>
                       <Typography variant="body2" color="warning.main">{p.pending}</Typography>
@@ -377,7 +377,7 @@ export default function OwnerAnalyticsPage() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignitems: 'center', minHeight: '60vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <CircularProgress size={48} />
       </Box>
     );
@@ -386,7 +386,7 @@ export default function OwnerAnalyticsPage() {
   return (
     <Box dir="rtl" sx={{ maxWidth: 1100, mx: 'auto' }}>
       {/* Header */}
-      <Stack direction="row" alignitems="center" spacing={2} sx={{ mb: 4 }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 4, alignItems: "center" }}>
         <Box
           sx={{
             width: 48,
@@ -394,7 +394,7 @@ export default function OwnerAnalyticsPage() {
             borderRadius: 2.5,
             bgcolor: 'primary.50',
             display: 'flex',
-            alignitems: 'center',
+            alignItems: 'center',
             justifyContent: 'center',
             color: 'primary.main',
           }}
@@ -402,7 +402,7 @@ export default function OwnerAnalyticsPage() {
           <InsightsIcon />
         </Box>
         <Box>
-          <Typography variant="h4" fontWeight="bold">التحليلات</Typography>
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>التحليلات</Typography>
           <Typography variant="body2" color="text.secondary">
             نظرة شاملة على أداء حجوزات عقاراتك
           </Typography>

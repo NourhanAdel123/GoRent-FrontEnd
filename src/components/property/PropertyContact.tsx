@@ -17,8 +17,11 @@ export default function PropertyContact({ property }: PropertyContactProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewingModalOpen, setIsViewingModalOpen] = useState(false);
 
-  
-  const ownerAvatar = (property.ownerId as Record<string, unknown>).avatar as string | undefined;
+  const owner = typeof property.ownerId === 'string'
+    ? { _id: property.ownerId, name: 'Owner', email: '', avatar: undefined }
+    : (property.ownerId as unknown as { _id: string; name: string; email: string; avatar?: string });
+
+  const ownerAvatar = owner.avatar;
 
   return (
     <>
@@ -57,17 +60,17 @@ export default function PropertyContact({ property }: PropertyContactProps) {
           >
             <Image
               src={ownerAvatar || '/user-default.jpg'}
-              alt={property.ownerId.name}
+              alt={owner.name}
               fill
               className="object-cover"
             />
           </Box>
           <Box>
             <Typography sx={{ fontWeight: 'bold', color: 'text.primary', fontSize: '1.125rem' }}>
-              {property.ownerId.name}
+              {owner.name}
             </Typography>
             <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-              {property.ownerId.email}
+              {owner.email}
             </Typography>
           </Box>
         </Box>

@@ -59,7 +59,9 @@ export const bookingService = {
       method: "PATCH",
     });
   },
-  createBooking: async (payload: CreateBookingRequest): Promise<CreateBookingResponse> => {
+  createBooking: async (
+    payload: CreateBookingRequest,
+  ): Promise<CreateBookingResponse> => {
     return fetchApi<CreateBookingResponse>("/api/bookings", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -67,12 +69,17 @@ export const bookingService = {
   },
 
   // Owner actions
-  getOwnerBookings: async (year?: number, month?: number): Promise<OwnerBookingsResponse> => {
+  getOwnerBookings: async (
+    year?: number,
+    month?: number,
+  ): Promise<OwnerBookingsResponse> => {
     const params = new URLSearchParams();
     if (year !== undefined) params.set("year", String(year));
     if (month !== undefined) params.set("month", String(month));
     const query = params.toString();
-    return fetchApi<OwnerBookingsResponse>(`/api/bookings/owner${query ? `?${query}` : ""}`);
+    return fetchApi<OwnerBookingsResponse>(
+      `/api/bookings/owner${query ? `?${query}` : ""}`,
+    );
   },
   acceptBooking: async (id: string): Promise<{ message: string }> => {
     return fetchApi<{ message: string }>(`/api/bookings/${id}/accept`, {
