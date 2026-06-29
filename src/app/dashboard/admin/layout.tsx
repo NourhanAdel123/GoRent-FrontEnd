@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Divider, useMediaQuery, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,16 +19,23 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import EmailIcon from '@mui/icons-material/Email';
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 
 const drawerWidth = 260;
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -48,6 +55,11 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
     { title: 'النزاعات', path: '/dashboard/admin/disputes', icon: <GavelIcon /> },
     { title: 'التقارير', path: '/dashboard/admin/reports', icon: <AssessmentIcon /> },
   ];
+
+  if (user?.role === 'superadmin') {
+    const usersIndex = menuItems.findIndex(item => item.path === '/dashboard/admin/users');
+    menuItems.splice(usersIndex + 1, 0, { title: 'إدارة المشرفين', path: '/dashboard/admin/admins', icon: <SupervisedUserCircleIcon /> });
+  }
 
   const drawerContent = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -98,6 +110,10 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       </List>
     </Box>
   );
+
+  if (!isMounted) {
+    return <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8f9fa' }} />;
+  }
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8f9fa' }}>

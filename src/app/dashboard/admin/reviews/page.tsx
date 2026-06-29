@@ -28,11 +28,14 @@ import ReviewsIcon from '@mui/icons-material/Reviews';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAdminReviews } from '../../../../hooks/useAdminReviews';
 import { useAdminReport } from '../../../../hooks/useAdminReport';
+import { useAuth } from '../../../../hooks/useAuth';
 import { AdminReview } from '../../../../types/admin';
 
 export default function AdminReviewsPage() {
   const { reviews, pagination, page, setPage, isLoading, error, deleteReview } = useAdminReviews();
   const { report, isLoading: isReportLoading, refreshReport } = useAdminReport();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superadmin';
   const [search, setSearch] = useState('');
   const [reviewToDelete, setReviewToDelete] = useState<AdminReview | null>(null);
 
@@ -132,7 +135,7 @@ export default function AdminReviewsPage() {
                   <TableCell sx={{ fontWeight: 'bold' }}>المستأجر</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>التقييم</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>التعليق</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }} align="center">الإجراءات</TableCell>
+                  {isSuperAdmin && <TableCell sx={{ fontWeight: 'bold' }} align="center">الإجراءات</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -149,7 +152,7 @@ export default function AdminReviewsPage() {
 
                 {!isLoading && filteredReviews.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5}>
+                      <TableCell colSpan={isSuperAdmin ? 5 : 4}>
                         <Box sx={{ textAlign: 'center', py: 6 }}>
                           <ReviewsIcon sx={{ fontSize: 56, color: 'text.disabled', mb: 1 }} />
                           <Typography variant="h6" color="text.secondary">
@@ -181,17 +184,19 @@ export default function AdminReviewsPage() {
                               {r.comment}
                             </Typography>
                           </TableCell>
-                          <TableCell align="center">
-                            <Button
-                                variant="outlined"
-                                color="error"
-                                size="small"
-                                onClick={() => setReviewToDelete(r)}
-                                sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
-                            >
-                              حذف
-                            </Button>
-                          </TableCell>
+                          {isSuperAdmin && (
+                            <TableCell align="center">
+                              <Button
+                                  variant="outlined"
+                                  color="error"
+                                  size="small"
+                                  onClick={() => setReviewToDelete(r)}
+                                  sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+                              >
+                                حذف
+                              </Button>
+                            </TableCell>
+                          )}
                         </TableRow>
                     ))}
               </TableBody>

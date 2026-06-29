@@ -258,4 +258,20 @@ export const adminService = {
   getReport: async (): Promise<{ report: PlatformReport }> => {
     return fetchApi<{ report: PlatformReport }>("/api/report");
   },
+
+  getAdmins: async (): Promise<{ admins: AdminUser[] }> => {
+    const data = await fetchApi<{ admins: RawUser[] }>("/api/users/admins/all");
+    return { admins: data.admins.map(mapUser) };
+  },
+
+  promoteAdmin: async (email: string): Promise<void> => {
+    await fetchApi("/api/users/admins/promote", {
+      method: "PATCH",
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  demoteAdmin: async (id: string): Promise<void> => {
+    await fetchApi(`/api/users/admins/${id}/demote`, { method: "PATCH" });
+  },
 };
