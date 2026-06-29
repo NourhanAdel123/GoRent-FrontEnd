@@ -1,27 +1,61 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Property } from '@/types/property';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import BookingModal from './BookingModal';
 import ViewingModal from './ViewingModal';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreateChatThread } from '@/hooks/useCreateChatThread';
 
 interface PropertyContactProps {
   property: Property;
 }
 
 export default function PropertyContact({ property }: PropertyContactProps) {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { createThread, isCreating, error: chatError } = useCreateChatThread();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewingModalOpen, setIsViewingModalOpen] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const owner = typeof property.ownerId === 'string'
     ? { _id: property.ownerId, name: 'Owner', email: '', avatar: undefined }
     : (property.ownerId as unknown as { _id: string; name: string; email: string; avatar?: string });
 
   const ownerAvatar = owner.avatar;
+  const contactError = localError || chatError;
+
+  const handleContactOwner = async () => {
+    setLocalError(null);
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (user?.role !== 'tenant') {
+      setLocalError('يمكن للمستأجرين فقط بدء محادثة مع المالك.');
+      return;
+    }
+
+    if (user._id === owner._id) {
+      setLocalError('لا يمكنك بدء محادثة مع نفسك.');
+      return;
+    }
+
+    const thread = await createThread(property._id);
+    if (!thread) return;
+
+    router.push(`/Profile?tab=messages&thread=${thread._id}`);
+  };
 
   return (
     <>
@@ -76,13 +110,22 @@ export default function PropertyContact({ property }: PropertyContactProps) {
           </Box>
         </Box>
 
+        {contactError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {contactError}
+          </Alert>
+        )}
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Button
             variant="contained"
             fullWidth
+            disabled={authLoading || isCreating}
+            onClick={handleContactOwner}
+            startIcon={isCreating ? <CircularProgress size={18} color="inherit" /> : undefined}
             sx={{ py: 1.5, borderRadius: 1.5 }}
           >
-            إرسال رسالة
+            {isCreating ? 'جاري فتح المحادثة...' : 'إرسال رسالة'}
           </Button>
           <Button
             variant="outlined"

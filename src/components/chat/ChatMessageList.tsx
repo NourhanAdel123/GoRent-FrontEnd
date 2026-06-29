@@ -29,7 +29,7 @@ export default function ChatMessageList({
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
@@ -37,14 +37,14 @@ export default function ChatMessageList({
 
   if (!messages.length) {
     return (
-      <div className="flex flex-1 items-center justify-center px-6 text-center text-sm text-gray-500">
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-6 text-center text-sm text-gray-500">
         لا توجد رسائل بعد. ابدأ المحادثة الآن.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
       {messages.map((message) => {
         const senderId = getMessageSenderId(message.senderId);
         const isOwn = senderId === currentUserId;

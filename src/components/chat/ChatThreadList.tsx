@@ -33,7 +33,7 @@ export default function ChatThreadList({
 }: ChatThreadListProps) {
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
@@ -41,7 +41,7 @@ export default function ChatThreadList({
 
   if (!threads.length) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center text-sm text-gray-500">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-y-auto px-6 text-center text-sm text-gray-500">
         <MessageSquare className="h-10 w-10 text-gray-300" />
         <p>{emptyMessage}</p>
         {emptyHint && (
@@ -52,7 +52,7 @@ export default function ChatThreadList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="min-h-0 flex-1 overflow-y-auto">
       {threads.map((thread) => {
         const participant = currentUserId
           ? getOtherParticipant(thread, currentUserId)

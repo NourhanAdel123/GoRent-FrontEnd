@@ -86,9 +86,12 @@ export default function ChatWorkspace({
       )}
 
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="grid min-h-[560px] grid-cols-1 lg:grid-cols-[320px_1fr]">
-          <div className="flex min-h-[280px] flex-col border-b border-gray-200 lg:min-h-0 lg:border-b-0 lg:border-l">
-            <div className="border-b border-gray-200 px-4 py-3">
+        {/* MODIFIED: Increased workspace height & streamlined limits to prevent unexpected expansion */}
+        <div className="flex h-[550px] flex-col overflow-hidden lg:grid lg:h-[650px] lg:grid-cols-[320px_1fr]">
+          
+          {/* MODIFIED: Cleaned up constraints here so it fills height natively and behaves as a flex box */}
+          <div className="flex h-1/2 shrink-0 flex-col overflow-hidden border-b border-gray-200 lg:h-full lg:shrink lg:border-b-0 lg:border-l">
+            <div className="shrink-0 border-b border-gray-200 px-4 py-3">
               <p className="text-sm font-semibold text-gray-900">
                 {threadListLabel}
               </p>
@@ -104,22 +107,24 @@ export default function ChatWorkspace({
               onSelect={handleSelectThread}
               emptyMessage={emptyThreadListMessage}
               emptyHint={emptyThreadListHint}
-            />
+              />
           </div>
 
-          <ChatPanel
-            thread={activeThread}
-            currentUserId={currentUserId}
-            messages={messages}
-            isLoading={messagesLoading}
-            isSending={isSending}
-            error={messagesError}
-            isConnected={isConnected}
-            typingUserId={typingUserId}
-            onSend={sendMessage}
-            onTyping={notifyTyping}
-            emptyPanelHint={emptyPanelHint}
-          />
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <ChatPanel
+              thread={activeThread}
+              currentUserId={currentUserId}
+              messages={messages}
+              isLoading={messagesLoading}
+              isSending={isSending}
+              error={messagesError}
+              isConnected={isConnected}
+              typingUserId={typingUserId}
+              onSend={sendMessage}
+              onTyping={notifyTyping}
+              emptyPanelHint={emptyPanelHint}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,16 +1,29 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { Box, Container } from '@mui/material';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Box, CircularProgress, Container } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import ProfileSidebar, { TabType } from '../../components/profile/ProfileSidebar';
 import ProfileContent from '../../components/profile/ProfileContent';
 import { ChatSocketProvider } from '../../context/ChatSocketContext';
 
-export default function ProfilePage() {
+function parseTabParam(value: string | null): TabType {
+  if (value === 'messages' || value === 'settings') return value;
+  return 'bookings';
+}
+
+function ProfilePageContent() {
   const { user, isAuthenticated, logout, checkAuth } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>('bookings');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabType>(() =>
+    parseTabParam(searchParams.get('tab')),
+  );
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setActiveTab(parseTabParam(searchParams.get('tab')));
+  }, [searchParams]);
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -66,5 +79,19 @@ export default function ProfilePage() {
       </Container>
     </Box>
     </ChatSocketProvider>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+          <CircularProgress />
+        </Box>
+      }
+    >
+      <ProfilePageContent />
+    </Suspense>
   );
 }

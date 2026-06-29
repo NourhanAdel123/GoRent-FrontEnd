@@ -37,7 +37,7 @@ export default function ChatPanel({
 }: ChatPanelProps) {
   if (!thread || !currentUserId) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-gray-50 px-6 text-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-hidden bg-gray-50 px-6 text-center">
         <div className="rounded-full bg-white p-4 shadow-sm">
           <Wifi className="h-8 w-8 text-gray-300" />
         </div>
@@ -52,8 +52,8 @@ export default function ChatPanel({
   const participant = getOtherParticipant(thread, currentUserId);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-gray-50">
-      <div className="flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-gray-50">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <ChatAvatar
             name={participant.name}
@@ -87,7 +87,7 @@ export default function ChatPanel({
       </div>
 
       {error && (
-        <div className="mx-4 mt-3 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="mx-4 mt-3 flex shrink-0 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
