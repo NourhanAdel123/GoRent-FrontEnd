@@ -43,21 +43,13 @@ const statusMap = {
 };
 
 export default function AdminDisputesPage() {
-  const { disputes, pagination, page, setPage, isLoading, error, updateDisputeStatus } = useAdminDisputes();
+  const { 
+    disputes, pagination, page, setPage, 
+    search, setSearch, statusFilter, setStatusFilter, 
+    isLoading, error, updateDisputeStatus 
+  } = useAdminDisputes();
   const { report, isLoading: isReportLoading, refreshReport } = useAdminReport();
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | AdminDispute['status']>('all');
   const [selectedDispute, setSelectedDispute] = useState<AdminDispute | null>(null);
-
-  const filteredDisputes = useMemo(() => {
-    return disputes.filter((d) => {
-      const matchesSearch =
-          d.propertyTitle.toLowerCase().includes(search.toLowerCase()) ||
-          d.subject.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || d.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [disputes, search, statusFilter]);
 
   const handleResolve = async (status: AdminDispute['status']) => {
     if (selectedDispute) {
@@ -117,7 +109,7 @@ export default function AdminDisputesPage() {
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 3 }}>
           <TextField
-              placeholder="بحث باسم العقار أو موضوع النزاع"
+              placeholder="بحث حسب موضوع النزاع"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               size="small"
@@ -177,7 +169,7 @@ export default function AdminDisputesPage() {
                         </TableRow>
                     ))}
 
-                {!isLoading && filteredDisputes.length === 0 && (
+                {!isLoading && disputes.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7}>
                         <Box sx={{ textAlign: 'center', py: 6 }}>
@@ -191,7 +183,7 @@ export default function AdminDisputesPage() {
                 )}
 
                 {!isLoading &&
-                    filteredDisputes.map((d) => (
+                    disputes.map((d) => (
                         <TableRow key={d._id} hover>
                           <TableCell sx={{ fontWeight: 600 }}>{d.propertyTitle}</TableCell>
                           <TableCell>{d.subject}</TableCell>

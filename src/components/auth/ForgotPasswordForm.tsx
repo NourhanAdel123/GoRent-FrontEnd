@@ -18,7 +18,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { passwordResetService } from '../../services/passwordReset';
+import { passwordResetService } from '@/services/passwordReset';
 
 type Step = 'EMAIL' | 'OTP' | 'NEW_PASSWORD';
 
@@ -48,8 +48,9 @@ export default function ForgotPasswordForm() {
       setEmail(data.email);
       setStep('OTP');
       setSuccessMsg('تم إرسال رمز التحقق إلى بريدك الإلكتروني.');
-    } catch (err: any) {
-      setError(err.message || 'حدث خطأ أثناء إرسال رمز التحقق.');
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || 'حدث خطأ أثناء إرسال رمز التحقق.');
     } finally {
       setIsLoading(false);
     }
@@ -64,14 +65,15 @@ export default function ForgotPasswordForm() {
       setOtp(data.otp);
       setStep('NEW_PASSWORD');
       setSuccessMsg('تم التحقق من الرمز بنجاح. الرجاء إدخال كلمة المرور الجديدة.');
-    } catch (err: any) {
-      setError(err.message || 'رمز التحقق غير صحيح أو منتهي الصلاحية.');
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || 'رمز التحقق غير صحيح أو منتهي الصلاحية.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const onPasswordSubmit = async (data: any) => {
+  const onPasswordSubmit = async (data: { newPassword: string; confirmPassword: string }) => {
     setIsLoading(true);
     setError(null);
     setSuccessMsg(null);
@@ -81,8 +83,9 @@ export default function ForgotPasswordForm() {
       setTimeout(() => {
         router.push('/auth/login');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'حدث خطأ أثناء تغيير كلمة المرور.');
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || 'حدث خطأ أثناء تغيير كلمة المرور.');
     } finally {
       setIsLoading(false);
     }

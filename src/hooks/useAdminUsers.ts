@@ -12,10 +12,20 @@ export function useAdminUsers() {
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
     const [roleFilter, setRoleFilter] = useState<"all" | AdminUser["role"]>("all");
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [totalActive, setTotalActive] = useState(0);
     const [totalSuspended, setTotalSuspended] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [search]);
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -24,6 +34,7 @@ export function useAdminUsers() {
                 page,
                 limit: PAGE_SIZE,
                 role: roleFilter === "all" ? undefined : roleFilter,
+                search: debouncedSearch,
             });
             setUsers(data.users);
             setTotalItems(data.pagination.totalItems);
@@ -73,6 +84,7 @@ export function useAdminUsers() {
                     page,
                     limit: PAGE_SIZE,
                     role: roleFilter === "all" ? undefined : roleFilter,
+                    search: debouncedSearch,
                 });
                 if (!ignore) {
                     setUsers(data.users);
@@ -95,7 +107,7 @@ export function useAdminUsers() {
         return () => {
             ignore = true;
         };
-    }, [page, roleFilter]);
+    }, [page, roleFilter, debouncedSearch]);
 
     useEffect(() => {
         let ignore = false;
@@ -127,6 +139,8 @@ export function useAdminUsers() {
         totalItems,
         pageSize: PAGE_SIZE,
         setPage,
+        search,
+        setSearch,
         roleFilter,
         setRoleFilter: changeRoleFilter,
         totalActive,

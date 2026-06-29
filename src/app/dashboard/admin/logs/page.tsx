@@ -6,7 +6,7 @@ import {
   TableHead, TableRow, Pagination as MuiPagination, Skeleton, Alert
 } from '@mui/material';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { useAdminLogs } from '../../../../hooks/useAdminLogs';
+import { useAdminLogs } from '@/hooks/useAdminLogs';
 
 export default function AdminLogsPage() {
   const { logs, adminsMap, isLoading, error, page, setPage, totalPages } = useAdminLogs();

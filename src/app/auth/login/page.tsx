@@ -1,8 +1,9 @@
 import LoginForm from '@/components/auth/LoginForm';
 import { Box, Container } from '@mui/material';
+import {Metadata} from "next";
 
-export const metadata = {
-  title: 'تسجيل الدخول | GoRent',
+export const metadata: Metadata = {
+    title: 'تسجيل الدخول | GoRent',
   description: 'قم بتسجيل الدخول إلى حسابك في GoRent'
 };
 

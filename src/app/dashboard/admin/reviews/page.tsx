@@ -32,20 +32,15 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { AdminReview } from '../../../../types/admin';
 
 export default function AdminReviewsPage() {
-  const { reviews, pagination, page, setPage, isLoading, error, deleteReview } = useAdminReviews();
+  const { 
+    reviews, pagination, page, setPage, 
+    search, setSearch, 
+    isLoading, error, deleteReview 
+  } = useAdminReviews();
   const { report, isLoading: isReportLoading, refreshReport } = useAdminReport();
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'superadmin';
-  const [search, setSearch] = useState('');
   const [reviewToDelete, setReviewToDelete] = useState<AdminReview | null>(null);
-
-  const filteredReviews = useMemo(() => {
-    return reviews.filter(
-        (r) =>
-            r.propertyTitle.toLowerCase().includes(search.toLowerCase()) ||
-            r.tenantName.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [reviews, search]);
 
   const handleConfirmDelete = async () => {
     if (reviewToDelete) {
@@ -103,12 +98,13 @@ export default function AdminReviewsPage() {
           </Grid>
         </Grid>
 
+        {isSuperAdmin? <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}></Box>:
         <Alert severity="info" sx={{ mb: 3 }}>
-          حذف التقييم متاح حالياً فقط إذا كان حساب المشرف هو كاتب التقييم نفسه (قيد على مستوى الـ API)، وسيظهر سبب الرفض من الخادم إذا حاولت حذف تقييم مستخدم آخر.
+        حذف التقييمات متاح لحسابات المشرفين العامين فقط
         </Alert>
-
+        }
         <TextField
-            placeholder="بحث باسم العقار أو المستأجر"
+            placeholder="بحث بإسم العقار "
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             size="small"
@@ -150,7 +146,7 @@ export default function AdminReviewsPage() {
                         </TableRow>
                     ))}
 
-                {!isLoading && filteredReviews.length === 0 && (
+                {!isLoading && reviews.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={isSuperAdmin ? 5 : 4}>
                         <Box sx={{ textAlign: 'center', py: 6 }}>
@@ -164,7 +160,7 @@ export default function AdminReviewsPage() {
                 )}
 
                 {!isLoading &&
-                    filteredReviews.map((r) => (
+                    reviews.map((r) => (
                         <TableRow key={r._id} hover>
                           <TableCell sx={{ fontWeight: 600 }}>{r.propertyTitle}</TableCell>
                           <TableCell>{r.tenantName}</TableCell>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -11,8 +11,8 @@ import {
   Alert,
 } from "@mui/material";
 import { usePathname } from "next/navigation";
-import { useAuth } from "../../../hooks/useAuth";
-import { useNotifications } from "../../../hooks/useNotifications";
+import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import DashboardSidebar, {
   DashboardNavItem,
 } from "../../../components/shared/DashboardSidebar";
@@ -41,6 +41,7 @@ export default function AdminDashboardLayout({
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 

@@ -55,6 +55,8 @@ export default function AdminUsersPage() {
     totalItems,
     pageSize,
     setPage,
+    search,
+    setSearch,
     roleFilter,
     setRoleFilter,
     totalActive,
@@ -62,16 +64,7 @@ export default function AdminUsersPage() {
     toggleUserStatus,
   } = useAdminUsers();
 
-  const [search, setSearch] = useState('');
   const [target, setTarget] = useState<AdminUser | null>(null);
-
-  const filteredUsers = useMemo(() => {
-    return users.filter(
-      (u) =>
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [users, search]);
 
   const handleConfirmToggle = () => {
     if (target) {
@@ -114,7 +107,7 @@ export default function AdminUsersPage() {
       {/* Filters */}
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 1 }}>
         <TextField
-          placeholder="بحث بالاسم أو البريد الإلكتروني (داخل الصفحة الحالية فقط)"
+          placeholder="بحث بالاسم أو البريد الإلكتروني "
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"
@@ -144,10 +137,6 @@ export default function AdminUsersPage() {
           </Select>
         </FormControl>
       </Box>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3 }}>
-        البحث بالاسم/البريد يعمل ضمن الصفحة الحالية فقط — الباك اند لسه مفيهوش بحث نصي شامل.
-      </Typography>
-
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
       <Paper sx={{ borderRadius: 2, border: '1px solid #eaeaea', boxShadow: 'none', overflow: 'hidden' }}>
@@ -175,7 +164,7 @@ export default function AdminUsersPage() {
                   </TableRow>
                 ))}
 
-              {!isLoading && filteredUsers.length === 0 && (
+              {!isLoading && users.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <Box sx={{ textAlign: 'center', py: 6 }}>
@@ -189,7 +178,7 @@ export default function AdminUsersPage() {
               )}
 
               {!isLoading &&
-                filteredUsers.map((u) => (
+                users.map((u) => (
                   <TableRow key={u._id} hover>
                     <TableCell sx={{ fontWeight: 600 }}>{u.name}</TableCell>
                     <TableCell>{u.email}</TableCell>

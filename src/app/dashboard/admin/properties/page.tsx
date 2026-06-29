@@ -43,21 +43,13 @@ const statusMap = {
 type PendingAction = { property: AdminProperty; status: AdminProperty['status'] };
 
 export default function AdminPropertiesPage() {
-  const { properties, pagination, page, setPage, isLoading, error, updatePropertyStatus } = useAdminProperties();
+  const { 
+    properties, pagination, page, setPage, 
+    search, setSearch, statusFilter, setStatusFilter, 
+    isLoading, error, updatePropertyStatus 
+  } = useAdminProperties();
   const { report, isLoading: isReportLoading, refreshReport } = useAdminReport();
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | AdminProperty['status']>('all');
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
-
-  const filteredProperties = useMemo(() => {
-    return properties.filter((p) => {
-      const matchesSearch =
-          p.title.toLowerCase().includes(search.toLowerCase()) ||
-          p.ownerName.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [properties, search, statusFilter]);
 
   const handleConfirm = async () => {
     if (pendingAction) {
@@ -175,7 +167,7 @@ export default function AdminPropertiesPage() {
                         </TableRow>
                     ))}
 
-                {!isLoading && filteredProperties.length === 0 && (
+                {!isLoading && properties.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={6}>
                         <Box sx={{ textAlign: 'center', py: 6 }}>
@@ -189,7 +181,7 @@ export default function AdminPropertiesPage() {
                 )}
 
                 {!isLoading &&
-                    filteredProperties.map((p) => (
+                    properties.map((p) => (
                         <TableRow key={p._id} hover>
                           <TableCell sx={{ fontWeight: 600 }}>{p.title}</TableCell>
                           <TableCell>{p.ownerName}</TableCell>

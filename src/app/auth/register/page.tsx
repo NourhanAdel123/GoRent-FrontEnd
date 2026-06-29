@@ -1,8 +1,9 @@
 import RegisterForm from '@/components/auth/RegisterForm';
 import { Box, Container } from '@mui/material';
+import {Metadata} from "next";
 
-export const metadata = {
-  title: 'تسجيل حساب جديد | GoRent',
+export const metadata: Metadata = {
+    title: 'تسجيل حساب جديد | GoRent',
   description: 'قم بإنشاء حساب جديد في منصة GoRent'
 };
 

@@ -1,6 +1,7 @@
 import NotificationList from "@/components/notifications/NotificationList";
+import {Metadata} from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "الإشعارات | لوحة تحكم المشرف",
   description: "عرض كافة إشعارات المشرف",
 };

@@ -1,7 +1,8 @@
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm';
 import { Box, Container } from '@mui/material';
+import {Metadata} from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'استعادة كلمة المرور | GoRent',
   description: 'قم باستعادة كلمة المرور لحسابك في GoRent'
 };
