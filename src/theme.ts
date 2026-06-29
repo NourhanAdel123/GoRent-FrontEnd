@@ -1,7 +1,6 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 import { PaletteMode } from '@mui/material';
 
-
 const tokens = {
   light: {
     primary: { main: '#0F766E', light: '#14B8A6', dark: '#0B5D57', contrastText: '#FFFFFF' },
@@ -27,7 +26,6 @@ const tokens = {
   },
 };
 
-
 const shape = { borderRadius: 10 };
 
 const typography: ThemeOptions['typography'] = {
@@ -43,7 +41,6 @@ const typography: ThemeOptions['typography'] = {
   body2: { fontSize: '0.875rem', lineHeight: 1.6 },
   button: { fontWeight: 600, textTransform: 'none' },
 };
-
 
 function getComponents(mode: PaletteMode): ThemeOptions['components'] {
   return {
@@ -79,6 +76,7 @@ function getComponents(mode: PaletteMode): ThemeOptions['components'] {
       },
     },
     MuiAppBar: {
+      defaultProps: { elevation: 0 },
       styleOverrides: {
         root: ({ theme }) => ({
           backgroundColor: theme.palette.background.paper,
@@ -93,9 +91,95 @@ function getComponents(mode: PaletteMode): ThemeOptions['components'] {
         root: { borderRadius: 8, fontWeight: 500 },
       },
     },
+
+    MuiTypography: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: 'inherit',
+        }),
+      },
+    },
+
+    
+    MuiDivider: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderColor: theme.palette.divider,
+        }),
+      },
+    },
+
+    
+    MuiListItemText: {
+      styleOverrides: {
+        primary: ({ theme }) => ({
+          color: theme.palette.text.primary,
+        }),
+        secondary: ({ theme }) => ({
+          color: theme.palette.text.secondary,
+        }),
+      },
+    },
+
+    
+    MuiListItemButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderRadius: 8,
+          '&:hover': {
+            backgroundColor: theme.palette.action?.hover,
+          },
+          '&.Mui-selected': {
+            backgroundColor:
+              mode === 'light'
+                ? 'rgba(15, 118, 110, 0.08)'
+                : 'rgba(45, 212, 191, 0.12)',
+            color: theme.palette.primary.main,
+            '&:hover': {
+              backgroundColor:
+                mode === 'light'
+                  ? 'rgba(15, 118, 110, 0.12)'
+                  : 'rgba(45, 212, 191, 0.16)',
+            },
+          },
+        }),
+      },
+    },
+
+    
+    MuiAvatar: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          border: `2px solid ${theme.palette.divider}`,
+        }),
+      },
+    },
+
+    
+    MuiIconButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.text.secondary,
+          '&:hover': {
+            backgroundColor: theme.palette.action?.hover,
+            color: theme.palette.primary.main,
+          },
+        }),
+      },
+    },
+
+    
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: ({ theme }) => ({
+          backgroundColor: theme.palette.text.primary,
+          color: theme.palette.background.paper,
+          fontSize: '0.75rem',
+        }),
+      },
+    },
   };
 }
-
 
 export function getTheme(mode: PaletteMode) {
   const colors = tokens[mode];
@@ -111,7 +195,3 @@ export function getTheme(mode: PaletteMode) {
     components: getComponents(mode),
   });
 }
-
-
-const theme = getTheme('light');
-export default theme;
