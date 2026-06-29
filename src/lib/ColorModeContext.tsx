@@ -47,4 +47,4 @@ export function ColorModeProvider({ children }: { children: React.ReactNode }) {
 
 export function useColorMode() {
     return useContext(ColorModeContext);
-}
+}

@@ -62,7 +62,7 @@ export function useAuth() {
               : data.user.role === "admin"
                 ? "/dashboard/admin"
                 : data.user.role === "superadmin"
-                  ? "/dashboard/superadmin"
+                  ? "/dashboard/admin"
                   : "/";
         window.location.href = defaultPath;
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { notificationService } from "../services/notificationService";
 import { INotification } from "../types/notification";
@@ -68,5 +68,10 @@ export const useNotifications = () => {
 
   const handleCloseToast = () => setToastOpen(false);
 
-  return { unreadCount, toastOpen, toastMessage, handleCloseToast };
+  const showToast = useCallback((message: string) => {
+    setToastMessage(message);
+    setToastOpen(true);
+  }, []);
+
+  return { unreadCount, toastOpen, toastMessage, handleCloseToast, showToast };
 };
