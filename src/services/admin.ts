@@ -5,6 +5,7 @@ import {
   AdminDispute,
   PlatformReport,
   Pagination,
+  AdminLog,
 } from "@/types/admin";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -273,5 +274,20 @@ export const adminService = {
 
   demoteAdmin: async (id: string): Promise<void> => {
     await fetchApi(`/api/users/admins/${id}/demote`, { method: "PATCH" });
+  },
+
+  getLogs: async (params: {
+    page?: number;
+    limit?: number;
+  } = {}): Promise<{ logs: AdminLog[]; pagination: Pagination }> => {
+    const query = new URLSearchParams();
+    if (params.page) query.set("page", String(params.page));
+    if (params.limit) query.set("limit", String(params.limit));
+    const qs = query.toString();
+    
+    const data = await fetchApi<{ logs: AdminLog[]; pagination: Pagination }>(
+        `/api/logs${qs ? `?${qs}` : ""}`
+    );
+    return { logs: data.logs, pagination: data.pagination };
   },
 };
