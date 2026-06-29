@@ -15,7 +15,23 @@ export function useAdminProperties() {
         totalPages: 1,
     });
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState<AdminProperty["status"] | "all">("all");
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [search]);
+
+    const changeStatusFilter = (status: AdminProperty["status"] | "all") => {
+        setStatusFilter(status);
+        setPage(1);
+    };
     const [error, setError] = useState<string | null>(null);
 
     const updatePropertyStatus = async (
@@ -40,7 +56,12 @@ export function useAdminProperties() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const data = await adminService.getProperties({ page, limit: PAGE_SIZE });
+                const data = await adminService.getProperties({ 
+                    page, 
+                    limit: PAGE_SIZE, 
+                    search: debouncedSearch, 
+                    status: statusFilter 
+                });
                 if (!ignore) {
                     setProperties(data.properties);
                     setPagination(data.pagination);
@@ -58,7 +79,7 @@ export function useAdminProperties() {
         return () => {
             ignore = true;
         };
-    }, [page]);
+    }, [page, debouncedSearch, statusFilter]);
 
-    return { properties, pagination, page, setPage, isLoading, error, updatePropertyStatus };
+    return { properties, pagination, page, setPage, search, setSearch, statusFilter, setStatusFilter: changeStatusFilter, isLoading, error, updatePropertyStatus };
 }

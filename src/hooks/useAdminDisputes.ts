@@ -15,7 +15,23 @@ export function useAdminDisputes() {
         totalPages: 1,
     });
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState<AdminDispute["status"] | "all">("all");
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [search]);
+
+    const changeStatusFilter = (status: AdminDispute["status"] | "all") => {
+        setStatusFilter(status);
+        setPage(1);
+    };
     const [error, setError] = useState<string | null>(null);
 
     const updateDisputeStatus = async (
@@ -38,7 +54,12 @@ export function useAdminDisputes() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const data = await adminService.getDisputes({ page, limit: PAGE_SIZE });
+                const data = await adminService.getDisputes({ 
+                    page, 
+                    limit: PAGE_SIZE, 
+                    search: debouncedSearch, 
+                    status: statusFilter 
+                });
                 if (!ignore) {
                     setDisputes(data.disputes);
                     setPagination(data.pagination);
@@ -55,7 +76,7 @@ export function useAdminDisputes() {
         return () => {
             ignore = true;
         };
-    }, [page]);
+    }, [page, debouncedSearch, statusFilter]);
 
-    return { disputes, pagination, page, setPage, isLoading, error, updateDisputeStatus };
+    return { disputes, pagination, page, setPage, search, setSearch, statusFilter, setStatusFilter: changeStatusFilter, isLoading, error, updateDisputeStatus };
 }

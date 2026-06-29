@@ -15,13 +15,23 @@ export function useAdminReviews() {
         totalPages: 1,
     });
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [search]);
     const [error, setError] = useState<string | null>(null);
 
     const deleteReview = async (id: string) => {
         try {
             await adminService.deleteReview(id);
-            const data = await adminService.getReviews({ page, limit: PAGE_SIZE });
+            const data = await adminService.getReviews({ page, limit: PAGE_SIZE, search: debouncedSearch });
             setReviews(data.reviews);
             setPagination(data.pagination);
             setError(null);
@@ -37,7 +47,7 @@ export function useAdminReviews() {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const data = await adminService.getReviews({ page, limit: PAGE_SIZE });
+                const data = await adminService.getReviews({ page, limit: PAGE_SIZE, search: debouncedSearch });
                 if (!ignore) {
                     setReviews(data.reviews);
                     setPagination(data.pagination);
@@ -55,7 +65,7 @@ export function useAdminReviews() {
         return () => {
             ignore = true;
         };
-    }, [page]);
+    }, [page, debouncedSearch]);
 
-    return { reviews, pagination, page, setPage, isLoading, error, deleteReview };
+    return { reviews, pagination, page, setPage, search, setSearch, isLoading, error, deleteReview };
 }
