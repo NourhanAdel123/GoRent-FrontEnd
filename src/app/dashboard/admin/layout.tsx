@@ -18,190 +18,183 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import EmailIcon from '@mui/icons-material/Email';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 
 const drawerWidth = 260;
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
-    const { logout, user } = useAuth();
-    const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
-    const pathname = usePathname();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const [isMounted, setIsMounted] = useState(false);
+  const { logout, user } = useAuth();
+  const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
+  const pathname = usePathname();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
+  useEffect(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+  }, []);
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setIsMounted(true);
-    }, []);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+  const menuItems = [
+    { title: 'نظرة عامة', path: '/dashboard/admin', icon: <DashboardIcon /> },
+    { title: 'الإشعارات', path: '/dashboard/admin/notifications', icon: (
+      <Badge badgeContent={unreadCount} color="error">
+        <NotificationsIcon />
+      </Badge>
+    ) },
+    // { title: 'رسائل التواصل', path: '/dashboard/admin/messages', icon: <EmailIcon /> },
+    { title: 'المستخدمين', path: '/dashboard/admin/users', icon: <PeopleIcon /> },
+    { title: 'العقارات', path: '/dashboard/admin/properties', icon: <HomeWorkIcon /> },
+    { title: 'التقييمات', path: '/dashboard/admin/reviews', icon: <ReviewsIcon /> },
+    { title: 'النزاعات', path: '/dashboard/admin/disputes', icon: <GavelIcon /> },
+    { title: 'التقارير', path: '/dashboard/admin/reports', icon: <AssessmentIcon /> },
+  ];
 
-    const menuItems = [
-        { title: 'نظرة عامة', path: '/dashboard/admin', icon: <DashboardIcon /> },
-        { title: 'الإشعارات', path: '/dashboard/admin/notifications', icon: (
-                <Badge badgeContent={unreadCount} color="error">
-                    <NotificationsIcon />
-                </Badge>
-            ) },
-        { title: 'المستخدمين', path: '/dashboard/admin/users', icon: <PeopleIcon /> },
-        { title: 'العقارات', path: '/dashboard/admin/properties', icon: <HomeWorkIcon /> },
-        { title: 'التقييمات', path: '/dashboard/admin/reviews', icon: <ReviewsIcon /> },
-        { title: 'النزاعات', path: '/dashboard/admin/disputes', icon: <GavelIcon /> },
-        { title: 'التقارير', path: '/dashboard/admin/reports', icon: <AssessmentIcon /> },
-    ];
+  if (user?.role === 'superadmin') {
+    const usersIndex = menuItems.findIndex(item => item.path === '/dashboard/admin/users');
+    menuItems.splice(usersIndex + 1, 0, { title: 'إدارة المشرفين', path: '/dashboard/admin/admins', icon: <SupervisedUserCircleIcon /> });
+  }
 
-    if (user?.role === 'superadmin') {
-        const usersIndex = menuItems.findIndex(item => item.path === '/dashboard/admin/users');
-        if (usersIndex !== -1) {
-            menuItems.splice(usersIndex + 1, 0, { title: 'إدارة المشرفين', path: '/dashboard/admin/admins', icon: <SupervisedUserCircleIcon /> });
-        }
-    }
-
-    const drawerContent = (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
-                    GoRent Admin
-                </Typography>
-            </Box>
-            <Divider />
-            <List sx={{ flexGrow: 1, px: 2, py: 2 }}>
-                {menuItems.map((item) => {
-                    const isActive = pathname === item.path;
-                    return (
-                        <ListItem disablePadding key={item.path} sx={{ mb: 1 }}>
-                            <ListItemButton
-                                component={Link}
-                                href={item.path}
-                                onClick={isMobile ? handleDrawerToggle : undefined}
-                                selected={isActive}
-                                sx={{
-                                    borderRadius: 1,
-                                    '&.Mui-selected': {
-                                        bgcolor: 'primary.main',
-                                        color: 'primary.contrastText',
-                                        '&:hover': { bgcolor: 'primary.dark' }
-                                    }
-                                }}
-                            >
-                                <ListItemIcon sx={{ color: isActive ? 'primary.contrastText' : 'inherit', minWidth: 40 }}>
-                                    {item.icon}
-                                </ListItemIcon>
-                                <ListItemText primary={item.title} sx={{ typography: 'body1', fontWeight: isActive ? 'bold' : 'normal' }} />
-                            </ListItemButton>
-                        </ListItem>
-                    );
-                })}
-            </List>
-            <Divider />
-            <List sx={{ px: 2, py: 2 }}>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={logout} sx={{ borderRadius: 1 }}>
-                        <ListItemIcon sx={{ color: 'error.main', minWidth: 40 }}>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="تسجيل الخروج" sx={{ color: 'error.main' }} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Box>
-    );
-
-    if (!isMounted) {
-        return <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }} />;
-    }
-
-    return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-            {/* App Bar */}
-            <AppBar
-                position="fixed"
-                elevation={1}
+  const drawerContent = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
+          GoRent Admin
+        </Typography>
+      </Box>
+      <Divider />
+      <List sx={{ flexGrow: 1, px: 2, py: 2 }}>
+        {menuItems.map((item) => {
+          const isActive = pathname === item.path;
+          return (
+            <ListItem disablePadding key={item.path} sx={{ mb: 1 }}>
+              <ListItemButton
+                component={Link}
+                href={item.path}
+                onClick={isMobile ? handleDrawerToggle : undefined}
+                selected={isActive}
                 sx={{
-                    width: { md: `calc(100% - ${drawerWidth}px)` },
-                    ml: { md: `${drawerWidth}px` },
-                    mr: 0,
-                    bgcolor: 'background.paper',
-                    color: 'text.primary',
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }
                 }}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { md: 'none' } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-                        لوحة تحكم المشرف
-                    </Typography>
-                    <Button color="primary" component={Link} href="/" variant="outlined" size="small">
-                        العودة للموقع
-                    </Button>
-                </Toolbar>
-            </AppBar>
+              >
+                <ListItemIcon sx={{ color: isActive ? 'white' : 'inherit', minWidth: 40 }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.title} sx={{ typography: 'body1', fontWeight: isActive ? 'bold' : 'normal' }} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
+      <Divider />
+      <List sx={{ px: 2, py: 2 }}>
+        <ListItem disablePadding>
+          <ListItemButton onClick={logout} sx={{ borderRadius: 2 }}>
+            <ListItemIcon sx={{ color: 'error.main', minWidth: 40 }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="تسجيل الخروج" sx={{ color: 'error.main' }} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
 
-            {/* Sidebar Drawer */}
-            <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
-                {/* Mobile Drawer */}
-                <Drawer
-                    anchor="left"
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{ keepMounted: true }}
-                    sx={{
-                        display: { xs: 'block', md: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                    }}
-                >
-                    {drawerContent}
-                </Drawer>
+  if (!isMounted) {
+    return <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8f9fa' }} />;
+  }
 
-                {/* Desktop Drawer */}
-                <Drawer
-                    anchor="left"
-                    variant="permanent"
-                    sx={{
-                        display: { xs: 'none', md: 'block' },
-                        '& .MuiDrawer-paper': {
-                            boxSizing: 'border-box',
-                            width: drawerWidth,
-                            borderLeft: (theme) => `1px solid ${theme.palette.divider}`,
-                            borderRight: 'none',
-                        },
-                    }}
-                    open
-                >
-                    {drawerContent}
-                </Drawer>
-            </Box>
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8f9fa' }}>
+      {/* App Bar */}
+      <AppBar
+        position="fixed"
+        elevation={1}
+        sx={{
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          mr: { md: `${drawerWidth}px` },
+          bgcolor: 'white',
+          color: 'text.primary',
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+            لوحة تحكم المشرف
+          </Typography>
+          <Button color="primary" component={Link} href="/" variant="outlined" size="small">
+            العودة للموقع
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-            {/* Main Content */}
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, p: { xs: 2, sm: 4 }, width: { md: `calc(100% - ${drawerWidth}px)` }, mt: '64px' }}
-            >
-                {children}
-            </Box>
+      {/* Sidebar Drawer */}
+      <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
+        {/* Mobile Drawer */}
+        <Drawer
+          anchor="right"
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }} // Better open performance on mobile.
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
 
-            <Snackbar
-                open={toastOpen}
-                autoHideDuration={6000}
-                onClose={handleCloseToast}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            >
-                <Alert onClose={handleCloseToast} severity="info" sx={{ width: '100%' }}>
-                    {toastMessage}
-                </Alert>
-            </Snackbar>
-        </Box>
-    );
+        {/* Desktop Drawer */}
+        <Drawer
+          anchor="right"
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderLeft: '1px solid #eaeaea', borderRight: 'none' },
+          }}
+          open
+        >
+          {drawerContent}
+        </Drawer>
+      </Box>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: { xs: 2, sm: 4 }, width: { md: `calc(100% - ${drawerWidth}px)` }, mt: '64px' }}
+      >
+        {children}
+      </Box>
+
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseToast} severity="info" sx={{ width: '100%' }}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
 }

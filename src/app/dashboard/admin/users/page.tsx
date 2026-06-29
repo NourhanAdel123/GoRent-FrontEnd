@@ -144,6 +144,9 @@ export default function AdminUsersPage() {
           </Select>
         </FormControl>
       </Box>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3 }}>
+        البحث بالاسم/البريد يعمل ضمن الصفحة الحالية فقط — الباك اند لسه مفيهوش بحث نصي شامل.
+      </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
