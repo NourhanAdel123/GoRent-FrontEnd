@@ -75,3 +75,11 @@ export interface PlatformReport {
   totalReviews: number;
   negativeReviews: number;
 }
+
+export interface AdminLog {
+  _id: string;
+  adminId: string;
+  action: string;
+  details?: string;
+  createdAt: string;
+}

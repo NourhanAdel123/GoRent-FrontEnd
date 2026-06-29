@@ -15,6 +15,7 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -59,6 +60,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         const usersIndex = menuItems.findIndex(item => item.path === '/dashboard/admin/users');
         if (usersIndex !== -1) {
             menuItems.splice(usersIndex + 1, 0, { title: 'إدارة المشرفين', path: '/dashboard/admin/admins', icon: <SupervisedUserCircleIcon /> });
+            menuItems.splice(usersIndex + 2, 0, { title: 'سجلات النظام', path: '/dashboard/admin/logs', icon: <ReceiptLongIcon /> });
         }
     }
 
