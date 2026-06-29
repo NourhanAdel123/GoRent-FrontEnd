@@ -170,7 +170,6 @@ export default function RegisterForm() {
               >
                 <MenuItem value="tenant">مستخدم (مستأجر)</MenuItem>
                 <MenuItem value="owner">مالك عقار</MenuItem>
-                <MenuItem value="admin">مدير</MenuItem>
               </Select>
             )}
           />
