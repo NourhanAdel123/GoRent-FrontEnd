@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { chatService } from "../services/chat";
-import { useChatSocket } from "../context/ChatSocketContext";
+import { chatService } from "@/services/chat";
+import { useChatSocket } from "@/context/ChatSocketContext";
 import {
   ChatMessage,
   MessageNewPayload,
   MessageStatusPayload,
   MessagesSeenPayload,
   TypingPayload,
-} from "../types/chat";
-import { getMessageSenderId } from "../lib/chatUtils";
+} from "@/types/chat";
+import { getMessageSenderId } from "@/lib/chatUtils";
 
 interface UseChatMessagesOptions {
   threadId: string | null;
@@ -108,8 +108,10 @@ export function useChatMessages({
 
   useEffect(() => {
     if (!threadId) {
-      setMessages([]);
-      return;
+      const timer = setTimeout(() => {
+        setMessages([]);
+      }, 0);
+      return () => clearTimeout(timer); // Cleanup timer just in case
     }
 
     let active = true;
