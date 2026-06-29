@@ -1,3 +1,5 @@
+import type { User } from './user';
+
 export type PropertyStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type PropertyType = "APARTMENT" | "SHOP";
 
@@ -21,7 +23,7 @@ export interface PropertySpecifications {
 
 export interface Property {
   _id: string;
-  ownerId: string | { _id: string; name: string; email: string };
+  ownerId: string | Pick<User, '_id' | 'name' | 'email' | 'profileImage'>;
   type: PropertyType;
   title: string;
   description: string;

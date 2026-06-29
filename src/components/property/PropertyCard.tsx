@@ -79,8 +79,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   // Handle ownerId whether it's populated or not
   const owner = typeof property.ownerId === 'string'
-    ? { _id: property.ownerId, name: 'Owner', email: '' }
-    : (property.ownerId as unknown as { _id: string; name: string; email: string; });
+    ? { _id: property.ownerId, name: 'Owner', email: '' as string, profileImage: undefined as string | undefined }
+    : property.ownerId;
 
   return (
     <Link href={`/properties/${property._id}`} style={{ textDecoration: 'none' }}>
@@ -159,7 +159,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             }}
             alt={owner.name}
-            src={`https://i.pravatar.cc/150?u=${owner._id}`} // Optional placeholder avatar
+            src={owner.profileImage} // Optional placeholder avatar
           >
             {owner.name.charAt(0)}
           </Avatar>
