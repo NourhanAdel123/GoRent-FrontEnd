@@ -93,6 +93,40 @@ function getComponents(mode: PaletteMode): ThemeOptions['components'] {
         root: { borderRadius: 8, fontWeight: 500 },
       },
     },
+    MuiTableHead: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '& .MuiTableRow-root': {
+            backgroundColor: `${mode === 'light' ? theme.palette.background.default : theme.palette.background.paper} !important`,
+          },
+          '& .MuiTableCell-root': {
+            color: theme.palette.text.primary,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            fontWeight: 'bold',
+          },
+        }),
+      },
+    },
+    MuiPagination: {
+      defaultProps: {
+        color: 'primary',
+        shape: 'rounded',
+      },
+    },
+    MuiPaginationItem: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.text.primary,
+          '&.Mui-selected': {
+            backgroundColor: `${theme.palette.primary.main} !important`,
+            color: `${theme.palette.primary.contrastText} !important`,
+            '&:hover': {
+              backgroundColor: `${theme.palette.primary.dark} !important`,
+            },
+          },
+        }),
+      },
+    },
   };
 }
 

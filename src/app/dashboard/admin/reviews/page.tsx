@@ -103,9 +103,11 @@ export default function AdminReviewsPage() {
           </Grid>
         </Grid>
 
-        <Alert severity="info" sx={{ mb: 3 }}>
-          حذف التقييم متاح حالياً فقط إذا كان حساب المشرف هو كاتب التقييم نفسه (قيد على مستوى الـ API)، وسيظهر سبب الرفض من الخادم إذا حاولت حذف تقييم مستخدم آخر.
-        </Alert>
+        {!isSuperAdmin && (
+            <Alert severity="info" sx={{ mb: 3 }}>
+              حذف التقييم متاح حالياً فقط إذا كان حسابك مشرف عام.
+            </Alert>
+        )}
 
         <TextField
             placeholder="بحث باسم العقار أو المستأجر"

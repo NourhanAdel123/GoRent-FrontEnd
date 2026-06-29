@@ -10,7 +10,7 @@ type ColorModeContextType = {
 };
 
 const ColorModeContext = createContext<ColorModeContextType>({
-    mode: 'light',
+    mode: 'dark',
     toggleColorMode: () => { },
     setMode: () => { },
 });
@@ -18,15 +18,19 @@ const ColorModeContext = createContext<ColorModeContextType>({
 const STORAGE_KEY = 'gorent-color-mode';
 
 export function ColorModeProvider({ children }: { children: React.ReactNode }) {
-    const [mode, setModeState] = useState<PaletteMode>(() => {
-        const saved = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) as PaletteMode | null : null;
+    const [mode, setModeState] = useState<PaletteMode>('dark');
+
+    useEffect(() => {
+        const saved = window.localStorage.getItem(STORAGE_KEY) as PaletteMode | null;
         if (saved === 'light' || saved === 'dark') {
-            return saved;
-        } else if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setModeState(saved);
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            setModeState('light');
+        } else {
+            setModeState('dark');
         }
-        return 'light';
-    });
+    }, []);
 
     const setMode = (newMode: PaletteMode) => {
         setModeState(newMode);
