@@ -39,8 +39,11 @@ export default function OwnerDashboardLayout({ children }: { children: React.Rea
       id: 'messages',
       label: 'الرسائل',
       href: '/dashboard/owner/messages',
-      icon: <MessageIcon />,
-      badge: <ChatNavBadge currentUserId={user?._id} />,
+      icon: (
+          <Badge badgeContent={unreadCount} color="error">
+            <MessageIcon />
+          </Badge>
+      ),
     },
     { id: 'analytics', label: 'التحليلات', href: '/dashboard/owner/analytics', icon: <InsightsIcon /> },
     { id: 'settings', label: 'الإعدادات', href: '/dashboard/owner/settings', icon: <SettingsOutlinedIcon /> },

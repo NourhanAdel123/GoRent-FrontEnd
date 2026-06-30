@@ -1,11 +1,12 @@
 "use client";
 
-import { AlertCircle, Wifi, WifiOff } from "lucide-react";
-import { ChatThread } from "../../types/chat";
+import { Box, Typography, Paper, Alert, Chip, Divider, Avatar } from "@mui/material";
+import WifiIcon from "@mui/icons-material/Wifi";
+import WifiOffIcon from "@mui/icons-material/WifiOff";
 import ChatAvatar from "./ChatAvatar";
 import ChatInput from "./ChatInput";
 import ChatMessageList from "./ChatMessageList";
-import { ChatMessage } from "../../types/chat";
+import { ChatThread, ChatMessage } from "../../types/chat";
 import { getOtherParticipant } from "../../lib/chatUtils";
 
 interface ChatPanelProps {
@@ -37,60 +38,81 @@ export default function ChatPanel({
 }: ChatPanelProps) {
   if (!thread || !currentUserId) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-hidden bg-gray-50 px-6 text-center">
-        <div className="rounded-full bg-white p-4 shadow-sm">
-          <Wifi className="h-8 w-8 text-gray-300" />
-        </div>
-        <p className="text-sm font-medium text-gray-700">
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          bgcolor: "background.default",
+          p: 3,
+          textAlign: "center",
+        }}
+      >
+        <Avatar sx={{ width: 64, height: 64, bgcolor: "background.paper", boxShadow: 1 }}>
+          <WifiIcon sx={{ fontSize: 32, color: "text.disabled" }} />
+        </Avatar>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }} color="text.primary">
           اختر محادثة لعرض الرسائل
-        </p>
-        <p className="text-xs text-gray-400">{emptyPanelHint}</p>
-      </div>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {emptyPanelHint}
+        </Typography>
+      </Box>
     );
   }
 
   const participant = getOtherParticipant(thread, currentUserId);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-gray-50">
-      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
+    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, bgcolor: "background.default" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+          p: 2,
+          borderBottom: 1,
+          borderColor: "divider",
+          borderRadius: 0,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
           <ChatAvatar
             name={participant.name}
             profileImage={participant.profileImage}
             size="md"
           />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-900">
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }}>
               {participant.name}
-            </p>
-            <p className="truncate text-xs text-gray-500">
+            </Typography>
+            <Typography variant="caption" noWrap color="text.secondary" sx={{ display: "block" }}>
               {thread.propertyId?.title}
-            </p>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+        </Box>
 
-        <div
-          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${
-            isConnected
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-amber-50 text-amber-700"
-          }`}
-        >
-          {isConnected ? (
-            <Wifi className="h-3.5 w-3.5" />
-          ) : (
-            <WifiOff className="h-3.5 w-3.5" />
-          )}
-          {isConnected ? "متصل" : "غير متصل"}
-        </div>
-      </div>
+        <Chip
+          icon={isConnected ? <WifiIcon fontSize="small" /> : <WifiOffIcon fontSize="small" />}
+          label={isConnected ? "متصل" : "غير متصل"}
+          size="small"
+          color={isConnected ? "success" : "warning"}
+          variant="outlined"
+          sx={{ fontWeight: 600, border: "none", bgcolor: isConnected ? "success.light" : "warning.light", color: isConnected ? "success.dark" : "warning.dark", "& .MuiChip-icon": { color: "inherit" } }}
+        />
+      </Paper>
 
       {error && (
-        <div className="mx-4 mt-3 flex shrink-0 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
+        <Box sx={{ px: 2, pt: 2 }}>
+          <Alert severity="error" sx={{ borderRadius: 2 }}>
+            {error}
+          </Alert>
+        </Box>
       )}
 
       <ChatMessageList
@@ -107,6 +129,6 @@ export default function ChatPanel({
         disabled={isSending}
         placeholder="اكتب رسالتك..."
       />
-    </div>
+    </Box>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { Box, Typography, Alert, Paper, Divider } from "@mui/material";
 import { useChatThreads } from "../../hooks/useChatThreads";
 import { useChatMessages } from "../../hooks/useChatMessages";
 import { useChatSocket } from "../../context/ChatSocketContext";
@@ -72,33 +72,62 @@ export default function ChatWorkspace({
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
-      </div>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <Box>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: "bold" }} color="text.primary">
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {description}
+        </Typography>
+      </Box>
 
       {(threadsError || socketError) && (
-        <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          <AlertCircle className="h-5 w-5 shrink-0" />
-          <span>{threadsError || socketError}</span>
-        </div>
+        <Alert severity="error" sx={{ borderRadius: 2 }}>
+          {threadsError || socketError}
+        </Alert>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        {/* MODIFIED: Increased workspace height & streamlined limits to prevent unexpected expansion */}
-        <div className="flex h-[550px] flex-col overflow-hidden lg:grid lg:h-[650px] lg:grid-cols-[320px_1fr]">
-          
-          {/* MODIFIED: Cleaned up constraints here so it fills height natively and behaves as a flex box */}
-          <div className="flex h-1/2 shrink-0 flex-col overflow-hidden border-b border-gray-200 lg:h-full lg:shrink lg:border-b-0 lg:border-l">
-            <div className="shrink-0 border-b border-gray-200 px-4 py-3">
-              <p className="text-sm font-semibold text-gray-900">
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: 4,
+          border: "1px solid",
+          borderColor: "divider",
+          overflow: "hidden",
+          bgcolor: "background.paper",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", lg: "row" },
+            height: { xs: 550, lg: 650 },
+            overflow: "hidden",
+          }}
+        >
+          {/* Thread List Section */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              flexShrink: 0,
+              width: { xs: "100%", lg: 320 },
+              height: { xs: "50%", lg: "100%" },
+              borderBottom: { xs: 1, lg: 0 },
+              borderLeft: { xs: 0, lg: 1 },
+              borderColor: "divider",
+              overflow: "hidden",
+            }}
+          >
+            <Box sx={{ p: 2, borderBottom: 1, borderColor: "divider", flexShrink: 0 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.primary">
                 {threadListLabel}
-              </p>
-              <p className="text-xs text-gray-500">
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
                 {threads.length} محادثة
-              </p>
-            </div>
+              </Typography>
+            </Box>
             <ChatThreadList
               threads={threads}
               activeThreadId={activeThreadId}
@@ -107,10 +136,20 @@ export default function ChatWorkspace({
               onSelect={handleSelectThread}
               emptyMessage={emptyThreadListMessage}
               emptyHint={emptyThreadListHint}
-              />
-          </div>
+            />
+          </Box>
 
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {/* Chat Panel Section */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minWidth: 0,
+              minHeight: 0,
+              overflow: "hidden",
+            }}
+          >
             <ChatPanel
               thread={activeThread}
               currentUserId={currentUserId}
@@ -124,9 +163,9 @@ export default function ChatWorkspace({
               onTyping={notifyTyping}
               emptyPanelHint={emptyPanelHint}
             />
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      </Paper>
+    </Box>
   );
 }

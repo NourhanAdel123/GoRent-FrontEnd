@@ -1,6 +1,9 @@
 "use client";
 
-import { Check, CheckCheck } from "lucide-react";
+import { Box, Typography, Paper, Link } from "@mui/material";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import DoneIcon from "@mui/icons-material/Done";
+import { alpha } from "@mui/material/styles";
 import { ChatMessage } from "../../types/chat";
 import { formatMessageTime } from "../../lib/chatUtils";
 
@@ -11,14 +14,14 @@ interface ChatMessageBubbleProps {
 
 function MessageStatusIcon({ status }: { status: ChatMessage["status"] }) {
   if (status === "SEEN") {
-    return <CheckCheck className="h-3.5 w-3.5 text-blue-500" />;
+    return <DoneAllIcon sx={{ fontSize: 16, color: "info.light" }} />;
   }
 
   if (status === "DELIVERED") {
-    return <CheckCheck className="h-3.5 w-3.5 text-gray-400" />;
+    return <DoneAllIcon sx={{ fontSize: 16, color: "inherit" }} />;
   }
 
-  return <Check className="h-3.5 w-3.5 text-gray-400" />;
+  return <DoneIcon sx={{ fontSize: 16, color: "inherit" }} />;
 }
 
 export default function ChatMessageBubble({
@@ -29,46 +32,77 @@ export default function ChatMessageBubble({
     typeof message.senderId === "object" ? message.senderId.name : undefined;
 
   return (
-    <div className={`flex ${isOwn ? "justify-start" : "justify-end"}`}>
-      <div
-        className={`max-w-[78%] rounded-2xl px-4 py-2.5 shadow-sm ${
-          isOwn
-            ? "rounded-br-md bg-primary text-white"
-            : "rounded-bl-md border border-gray-200 bg-white text-gray-900"
-        }`}
+    <Box sx={{ display: "flex", justifyContent: isOwn ? "flex-start" : "flex-end" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          maxWidth: "78%",
+          px: 2,
+          py: 1.5,
+          borderRadius: 4,
+          ...(isOwn
+            ? {
+                borderBottomRightRadius: 8,
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+              }
+            : {
+                borderBottomLeftRadius: 8,
+                border: "1px solid",
+                borderColor: "divider",
+                bgcolor: "background.paper",
+                color: "text.primary",
+              }),
+        }}
       >
         {!isOwn && senderName && (
-          <p className="mb-1 text-xs font-semibold text-primary">
+          <Typography
+            variant="caption"
+            sx={{ mb: 0.5, display: "block", fontWeight: 600, color: "primary.main" }}
+          >
             {senderName}
-          </p>
+          </Typography>
         )}
 
-        <p className=" break-words leading-relaxed ">{message.text}</p>
+        <Typography variant="body2" sx={{ wordBreak: "break-word", lineHeight: 1.6 }}>
+          {message.text}
+        </Typography>
 
         {message.attachmentUrl && (
-          <a
+          <Link
             href={message.attachmentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`mt-2 block text-xs underline ${
-              isOwn ? "text-blue-100" : "text-primary"
-            }`}
+            sx={{
+              mt: 1,
+              display: "block",
+              typography: "caption",
+              color: isOwn ? "primary.contrastText" : "primary.main",
+              textDecoration: "underline",
+              opacity: 0.9,
+              "&:hover": { opacity: 1 },
+            }}
           >
             عرض المرفق
-          </a>
+          </Link>
         )}
 
-        <div
-          className={`mt-1.5 flex items-center gap-1.5 ${
-            isOwn ? "justify-start text-blue-100" : "justify-end text-gray-400"
-          }`}
+        <Box
+          sx={{
+            mt: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            justifyContent: isOwn ? "flex-start" : "flex-end",
+            color: isOwn ? alpha("#fff", 0.7) : "text.secondary",
+          }}
         >
-          <span className="text-[11px]">
+          <Typography variant="caption" sx={{ fontSize: "0.6875rem" }}>
             {formatMessageTime(message.createdAt)}
-          </span>
+          </Typography>
           {isOwn && <MessageStatusIcon status={message.status} />}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Paper>
+    </Box>
   );
 }

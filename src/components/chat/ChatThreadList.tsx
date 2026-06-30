@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Box, Typography, CircularProgress, List, ListItemButton, Badge } from "@mui/material";
+import ChatIcon from "@mui/icons-material/Chat";
 import { ChatThread } from "../../types/chat";
 import ChatAvatar from "./ChatAvatar";
 import {
@@ -33,26 +34,26 @@ export default function ChatThreadList({
 }: ChatThreadListProps) {
   if (isLoading) {
     return (
-      <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      </div>
+      <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 0, overflowY: "auto" }}>
+        <CircularProgress color="primary" />
+      </Box>
     );
   }
 
   if (!threads.length) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-y-auto px-6 text-center text-sm text-gray-500">
-        <MessageSquare className="h-10 w-10 text-gray-300" />
-        <p>{emptyMessage}</p>
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1.5, minHeight: 0, overflowY: "auto", px: 3, textAlign: "center", color: "text.secondary" }}>
+        <ChatIcon sx={{ fontSize: 40, color: "divider" }} />
+        <Typography variant="body2">{emptyMessage}</Typography>
         {emptyHint && (
-          <p className="text-xs text-gray-400">{emptyHint}</p>
+          <Typography variant="caption" color="text.disabled">{emptyHint}</Typography>
         )}
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto">
+    <List sx={{ flex: 1, minHeight: 0, overflowY: "auto", p: 0 }}>
       {threads.map((thread) => {
         const participant = currentUserId
           ? getOtherParticipant(thread, currentUserId)
@@ -62,13 +63,20 @@ export default function ChatThreadList({
         const unreadCount = thread.unreadCount ?? 0;
 
         return (
-          <button
+          <ListItemButton
             key={thread._id}
-            type="button"
             onClick={() => onSelect(thread._id)}
-            className={`flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 text-right transition hover:bg-gray-50 ${
-              isActive ? "bg-primary/5" : "bg-white"
-            }`}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              px: 2,
+              py: 1.5,
+              borderBottom: 1,
+              borderColor: "divider",
+              bgcolor: isActive ? "primary.50" : "background.paper",
+              "&:hover": { bgcolor: isActive ? "primary.50" : "action.hover" },
+            }}
           >
             <ChatAvatar
               name={participant.name}
@@ -76,44 +84,44 @@ export default function ChatThreadList({
               size="md"
             />
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <p className="truncate text-sm font-semibold text-gray-900">
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }} color="text.primary">
                   {participant.name}
-                </p>
-                <span className="shrink-0 text-[11px] text-gray-400">
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0, fontSize: "0.6875rem" }}>
                   {formatThreadPreviewTime(thread.lastMessageAt)}
-                </span>
-              </div>
+                </Typography>
+              </Box>
 
-              <div className="mt-1 flex items-center gap-2">
-                <div className="relative h-5 w-5 shrink-0 overflow-hidden rounded bg-gray-100">
+              <Box sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ position: "relative", height: 20, width: 20, flexShrink: 0, overflow: "hidden", borderRadius: 1, bgcolor: "action.hover" }}>
                   <Image
                     src={propertyImage}
                     alt={thread.propertyId?.title || "عقار"}
                     fill
                     sizes="20px"
-                    className="object-cover"
+                    style={{ objectFit: "cover" }}
                     unoptimized={
                       propertyImage.startsWith("data:") ||
                       propertyImage.includes("cloudinary.com")
                     }
                   />
-                </div>
-                <p className="truncate text-xs text-gray-500">
+                </Box>
+                <Typography variant="caption" noWrap color="text.secondary">
                   {thread.propertyId?.title}
-                </p>
-              </div>
-            </div>
+                </Typography>
+              </Box>
+            </Box>
 
             {unreadCount > 0 && (
-              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-white">
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 20, height: 20, borderRadius: 10, bgcolor: "primary.main", color: "primary.contrastText", px: 0.75, fontSize: "0.6875rem", fontWeight: 600, flexShrink: 0 }}>
                 {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
+              </Box>
             )}
-          </button>
+          </ListItemButton>
         );
       })}
-    </div>
+    </List>
   );
 }
