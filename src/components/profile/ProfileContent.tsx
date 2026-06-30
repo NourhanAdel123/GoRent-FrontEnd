@@ -7,6 +7,7 @@ import { TabType } from './ProfileSidebar';
 import BookingsTab from './tabs/BookingsTab';
 import SettingsTab from './tabs/SettingsTab';
 import MessagesTab from './tabs/MessagesTab';
+import ReviewsTab from './tabs/ReviewsTab';
 
 interface ProfileContentProps {
   user: User;
@@ -32,6 +33,8 @@ export default function ProfileContent({ user, activeTab, onUpdate }: ProfileCon
       );
     case 'settings':
       return <SettingsTab user={user} onUpdate={onUpdate} />;
+      case 'reviews':
+        return <ReviewsTab />;
     default:
       return <BookingsTab />;
   }

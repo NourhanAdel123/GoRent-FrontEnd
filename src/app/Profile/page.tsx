@@ -9,7 +9,7 @@ import ProfileContent from '../../components/profile/ProfileContent';
 import { ChatSocketProvider } from '../../context/ChatSocketContext';
 
 function parseTabParam(value: string | null): TabType {
-  if (value === 'messages' || value === 'settings') return value;
+  if (value === 'messages' || value === 'settings' || value === 'reviews') return value;
   return 'bookings';
 }
 
