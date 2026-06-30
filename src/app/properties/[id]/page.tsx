@@ -12,6 +12,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Paper from '@mui/material/Paper';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PropertyHero from '@/components/property/PropertyHero';
 import PropertyFeatures from '@/components/property/PropertyFeatures';
 import PropertyContact from '@/components/property/PropertyContact';
@@ -34,6 +35,7 @@ export default function PropertyDetailsPage() {
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -43,6 +45,7 @@ export default function PropertyDetailsPage() {
         })
         .catch((err) => {
           console.error("Failed to fetch property details", err);
+          setErrorMsg(err.message || "حدث خطأ");
         })
         .finally(() => {
           setLoading(false);
@@ -74,6 +77,8 @@ export default function PropertyDetailsPage() {
   }
 
   if (!property) {
+    const isUnavailable = errorMsg === "Property is not available";
+
     return (
       <Box
         sx={{
@@ -91,19 +96,25 @@ export default function PropertyDetailsPage() {
             width: 100,
             height: 100,
             borderRadius: '50%',
-            bgcolor: (theme) => theme.palette.mode === 'light' ? 'rgba(220, 38, 38, 0.08)' : 'rgba(248, 113, 113, 0.08)',
+            bgcolor: (theme) => theme.palette.mode === 'light' 
+              ? (isUnavailable ? 'rgba(245, 158, 11, 0.08)' : 'rgba(220, 38, 38, 0.08)') 
+              : (isUnavailable ? 'rgba(252, 211, 77, 0.08)' : 'rgba(248, 113, 113, 0.08)'),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             border: '2px dashed',
-            borderColor: 'error.main',
+            borderColor: isUnavailable ? 'warning.main' : 'error.main',
             mb: 2,
           }}
         >
-          <MapOutlinedIcon sx={{ fontSize: 40, color: 'error.main', opacity: 0.7 }} />
+          {isUnavailable ? (
+            <LockOutlinedIcon sx={{ fontSize: 40, color: 'warning.main', opacity: 0.7 }} />
+          ) : (
+            <MapOutlinedIcon sx={{ fontSize: 40, color: 'error.main', opacity: 0.7 }} />
+          )}
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-          العقار غير موجود
+          {isUnavailable ? 'هذا العقار غير متاح حالياً' : 'العقار غير موجود'}
         </Typography>
         <Button
           variant="contained"
