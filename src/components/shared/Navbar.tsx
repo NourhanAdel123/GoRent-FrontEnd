@@ -5,82 +5,83 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-// import DarkModeIcon from "@mui/icons-material/DarkMode";
-// import LightModeIcon from "@mui/icons-material/LightMode";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import MenuIcon from "@mui/icons-material/Menu";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "../../hooks/useAuth";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import NotificationMenu from "./NotificationMenu";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
-// import { useColorMode } from "../../lib/ColorModeContext";
+import { RootState } from "@/store";
 
-const pages = [
-  { name: "عن الشركة", path: "/about" },
-  { name: "تواصل معنا", path: "/contact" },
-];
-
-// Presentation-only icon lookup for the mobile dropdown — purely visual,
-// doesn't touch the `pages` data itself.
-const pageIcons: Record<string, React.ReactNode> = {
-  "عن الشركة": <InfoOutlinedIcon fontSize="small" />,
-  "تواصل معنا": <EmailOutlinedIcon fontSize="small" />,
-};
-
-// Maps a user role to its dashboard route. Returns "" for roles with no
-// dedicated dashboard (tenant goes to the public profile page instead).
+// Maps a user role to its dashboard route.
 function getDashboardPath(role?: string): string {
   switch (role) {
     case "owner":
       return "/dashboard/owner";
     case "admin":
+    case "superadmin":
       return "/dashboard/admin";
-    // NOTE: no /dashboard/superadmin route exists yet in the app directory.
-    // Add it before re-enabling this case, otherwise it will 404.
-    // case "superadmin":
-    //   return "/dashboard/superadmin";
     default:
       return "/Profile";
   }
 }
 
-// function ThemeToggle() {
-//   const { mode, toggleColorMode } = useColorMode();
-//   return (
-//     <Tooltip title={mode === "light" ? "تفعيل الوضع الليلي" : "تفعيل الوضع النهاري"}>
-//       <IconButton
-//         onClick={toggleColorMode}
-//         color="inherit"
-//         aria-label="toggle color mode"
-//       >
-//         {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-//       </IconButton>
-//     </Tooltip>
-//   );
-// }
+// Maps a user role to its messages route.
+function getMessagesPath(isAuthenticated: boolean, role?: string): string {
+  if (!isAuthenticated) return "/auth/login";
+  switch (role) {
+    case "admin":
+    case "superadmin":
+      return "/dashboard/admin/messages";
+    case "owner":
+      return "/dashboard/owner/messages";
+    case "tenant":
+    default:
+      return "/Profile?tab=messages";
+  }
+}
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const user = useSelector((state: RootState) => state.auth.user);
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const pathname = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
+  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return;
+    }
+    setDrawerOpen(open);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  // Dynamically generate pages based on authentication state
+  const pages = [
+    { name: "الرئيسية", path: "/", icon: <HomeOutlinedIcon fontSize="small" /> },
+    { name: "عن الشركة", path: "/about", icon: <InfoOutlinedIcon fontSize="small" /> },
+    { name: "تواصل معنا", path: "/contact", icon: <EmailOutlinedIcon fontSize="small" /> },
+    { name: "الرسائل", path: getMessagesPath(isAuthenticated, user?.role), icon: <MessageOutlinedIcon fontSize="small" /> },
+  ];
 
   return (
     <AppBar position="sticky">
@@ -114,7 +115,7 @@ export default function Navbar() {
               aria-label="navigation menu"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={handleOpenNavMenu}
+              onClick={toggleDrawer(true)}
               color="inherit"
               sx={{
                 transition: "background-color 0.2s ease",
@@ -123,52 +124,66 @@ export default function Navbar() {
             >
               <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              keepMounted
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              slotProps={{
-                paper: {
-                  sx: {
-                    mt: 1.5,
-                    minWidth: 200,
-                    borderRadius: 3,
-                    boxShadow: (theme) =>
-                      theme.palette.mode === "light"
-                        ? "0 12px 32px rgba(15, 23, 42, 0.18)"
-                        : "0 12px 32px rgba(0, 0, 0, 0.6)",
-                    p: 0.75,
-                  },
-                },
-              }}
+            
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+              sx={{ '& .MuiDrawer-paper': { width: 280, borderRadius: "16px 0 0 16px" } }}
             >
-              {pages.map((page) => (
-                <MenuItem
-                  key={page.name}
-                  onClick={handleCloseNavMenu}
-                  component={Link}
-                  href={page.path}
-                  sx={{
-                    borderRadius: 2,
-                    gap: 1.25,
-                    py: 1.1,
-                    color: "text.primary",
-                    "&:hover": { bgcolor: (theme) => `${theme.palette.primary.main}14` },
-                  }}
-                >
-                  <Box sx={{ display: "flex", color: "primary.main" }}>{pageIcons[page.name]}</Box>
-                  <Typography sx={{ fontWeight: 600 }}>{page.name}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+              <Box
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+                sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+              >
+                <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
+                  <Image
+                    src="/GoRent-logo.png"
+                    alt="GoRent"
+                    height={32}
+                    width={96}
+                    style={{ objectFit: "contain", width: "auto" }}
+                  />
+                </Box>
+                <Divider />
+                <List sx={{ px: 2, py: 2 }}>
+                  {pages.map((page) => {
+                    // Quick check if the path is active (handling Profile?tab=messages specially is tricky in pathname, but we'll exact match or handle simple paths)
+                    const isActive = pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]);
+                    
+                    return (
+                      <ListItem key={page.name} disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                          component={Link}
+                          href={page.path}
+                          sx={{
+                            borderRadius: 2,
+                            bgcolor: isActive ? (theme) => `${theme.palette.primary.main}14` : 'transparent',
+                            color: isActive ? 'primary.main' : 'text.primary',
+                            "&:hover": { bgcolor: (theme) => `${theme.palette.primary.main}14` },
+                          }}
+                        >
+                          <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'text.secondary', minWidth: 40 }}>
+                            {page.icon}
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={
+                              <Typography sx={{ fontWeight: isActive ? 700 : 500 }}>
+                                {page.name}
+                              </Typography>
+                            } 
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </Box>
+            </Drawer>
           </Box>
 
-          {/* Mobile Logo — absolutely centered across the full toolbar width,
-              regardless of how wide the menu icon / right-side actions are. */}
+          {/* Mobile Logo — absolutely centered across the full toolbar width */}
           <Box
             component={Link}
             href="/"
@@ -190,42 +205,43 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 4, gap: 1 }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                component={Link}
-                href={page.path}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: "text.primary",
-                  display: "block",
-                  fontWeight: 700,
-                  position: "relative",
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    bottom: 6,
-                    insetInlineStart: "50%",
-                    width: 0,
-                    height: 2,
-                    bgcolor: "primary.main",
-                    borderRadius: 1,
-                    transform: "translateX(-50%)",
-                    transition: "width 0.2s ease",
-                  },
-                  "&:hover::after": { width: "60%" },
-                }}
-              >
-                {page.name}
-              </Button>
-            ))}
+            {pages.map((page) => {
+              const isActive = pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]);
+              
+              return (
+                <Button
+                  key={page.name}
+                  component={Link}
+                  href={page.path}
+                  sx={{
+                    my: 2,
+                    color: isActive ? "primary.main" : "text.primary",
+                    display: "block",
+                    fontWeight: 700,
+                    position: "relative",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      bottom: 6,
+                      insetInlineStart: "50%",
+                      width: isActive ? "60%" : 0,
+                      height: 2,
+                      bgcolor: "primary.main",
+                      borderRadius: 1,
+                      transform: "translateX(-50%)",
+                      transition: "width 0.2s ease",
+                    },
+                    "&:hover::after": { width: "60%" },
+                  }}
+                >
+                  {page.name}
+                </Button>
+              );
+            })}
           </Box>
 
-          {/* Right side: theme toggle + auth section */}
+          {/* Right side: auth section */}
           <Box sx={{ flexGrow: { xs: 1, md: 0 }, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 1 }}>
-            {/* <ThemeToggle /> */}
-
             {isAuthenticated && user ? (
               <>
                 <NotificationMenu />
