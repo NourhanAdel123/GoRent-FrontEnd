@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { Loader2, Send } from "lucide-react";
+import React, { FormEvent, useState } from "react";
+import { Box, TextField, IconButton, CircularProgress } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 
 interface ChatInputProps {
   onSend: (text: string) => Promise<void>;
@@ -19,7 +20,7 @@ export default function ChatInput({
   const [text, setText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent | React.KeyboardEvent) => {
     event.preventDefault();
     const trimmed = text.trim();
     if (!trimmed || disabled || isSubmitting) return;
@@ -34,36 +35,65 @@ export default function ChatInput({
     }
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+    onTyping?.(event.target.value.length > 0);
+  };
+
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={handleSubmit}
-      className="flex shrink-0 items-end gap-2 border-t border-gray-200 bg-white px-4 py-3"
+      sx={{
+        p: 2,
+        bgcolor: "background.paper",
+        borderTop: 1,
+        borderColor: "divider",
+        display: "flex",
+        alignItems: "flex-end",
+        gap: 1,
+      }}
     >
-      <textarea
+      <TextField
+        fullWidth
+        multiline
+        maxRows={4}
         value={text}
-        onChange={(event) => {
-          setText(event.target.value);
-          onTyping?.(event.target.value.length > 0);
-        }}
+        onChange={handleChange}
         onBlur={() => onTyping?.(false)}
         placeholder={placeholder}
-        rows={1}
         disabled={disabled || isSubmitting}
-        className="max-h-28 min-h-[44px] flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:bg-gray-50"
+        variant="outlined"
+        size="small"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 3,
+            bgcolor: "background.default",
+          },
+        }}
       />
-
-      <button
+      <IconButton
         type="submit"
-        disabled={disabled || isSubmitting || !text.trim()}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-        aria-label="إرسال"
+        color="primary"
+        disabled={!text.trim() || disabled || isSubmitting}
+        sx={{
+          bgcolor: "primary.main",
+          color: "primary.contrastText",
+          "&:hover": { bgcolor: "primary.dark" },
+          "&.Mui-disabled": {
+            bgcolor: "action.disabledBackground",
+            color: "action.disabled",
+          },
+          mb: 0.25,
+          transform: "rotate(180deg)",
+        }}
       >
         {isSubmitting ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
+          <CircularProgress size={24} color="inherit" sx={{ transform: "rotate(180deg)" }} />
         ) : (
-          <Send className="h-5 w-5" />
+          <SendIcon />
         )}
-      </button>
-    </form>
+      </IconButton>
+    </Box>
   );
 }
