@@ -8,6 +8,7 @@ import { reviewService } from '@/services/review';
 import { Review } from '@/types/review';
 import AddReviewForm from './AddReviewForm';
 import EditReviewForm from './EditReviewForm';
+import RatingBreakdown from './RatingBreakdown';
 
 interface PropertyReviewsProps {
   targetUserId?: string;
@@ -22,6 +23,7 @@ export default function PropertyReviews({ targetUserId, propertyId }: PropertyRe
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [filterRating, setFilterRating] = useState<number | null>(null);
 
   // Incrementing refreshKey re-triggers the effect to reload reviews
   const triggerRefresh = () => setRefreshKey((k) => k + 1);
@@ -85,6 +87,10 @@ export default function PropertyReviews({ targetUserId, propertyId }: PropertyRe
     );
   }
 
+  const displayedReviews = filterRating 
+    ? reviews.filter(r => Math.floor(r.rating) === filterRating)
+    : reviews;
+
   return (
     <Box sx={{ mt: 2 }}>
       {propertyId && <AddReviewForm propertyId={propertyId} onReviewAdded={triggerRefresh} />}
@@ -95,11 +101,16 @@ export default function PropertyReviews({ targetUserId, propertyId }: PropertyRe
         </Box>
       ) : (
         <>
+          <RatingBreakdown 
+            reviews={reviews} 
+            selectedRating={filterRating} 
+            onRatingSelect={setFilterRating} 
+          />
           <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
-            التقييمات ({reviews.length})
+            التقييمات ({displayedReviews.length})
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {reviews.map((review, index) => {
+            {displayedReviews.map((review, index) => {
               const isAuthor = currentUser?._id === review.authorId._id;
               const isDeleting = deletingId === review._id;
               const isEditing = editingId === review._id;
@@ -174,7 +185,7 @@ export default function PropertyReviews({ targetUserId, propertyId }: PropertyRe
                       )}
                     </Box>
                   </Box>
-                  {index < reviews.length - 1 && <Divider sx={{ mt: 3 }} />}
+                  {index < displayedReviews.length - 1 && <Divider sx={{ mt: 3 }} />}
                 </Box>
               );
             })}
