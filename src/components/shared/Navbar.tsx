@@ -104,10 +104,11 @@ export default function Navbar() {
           >
             <Image
               src="/GoRent-logo.png"
+              priority={true}
               alt="GoRent"
               height={32}
               width={96}
-              style={{ objectFit: "contain", width: "auto" }}
+              style={{ objectFit: "contain", width: "auto",height:"auto" }}
             />
           </Box>
 
@@ -143,10 +144,11 @@ export default function Navbar() {
                 <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
                   <Image
                     src="/GoRent-logo.png"
+                    priority={true}
                     alt="GoRent"
                     height={32}
                     width={96}
-                    style={{ objectFit: "contain", width: "auto" }}
+                    style={{ objectFit: "contain", width: "auto",height:"auto" }}
                   />
                 </Box>
                 <Divider />
@@ -199,10 +201,11 @@ export default function Navbar() {
           >
             <Image
               src="/GoRent-logo.png"
+              priority={true}
               alt="GoRent"
               height={28}
               width={84}
-              style={{ objectFit: "contain", width: "auto" }}
+              style={{ objectFit: "contain", width: "auto",height:"auto" }}
             />
           </Box>
 
