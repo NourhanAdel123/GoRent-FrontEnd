@@ -115,10 +115,18 @@ export default function PropertyListItem({
       </div>
 
       <div className="flex shrink-0 flex-col items-end gap-2">
-        <p className="text-lg font-bold text-blue-600">
-          {formatCurrency(property.pricePerMonth)}
-        </p>
-        {!property.listingPaid && (
+        {!property.listingPaid && property.status === "APPROVED" ? (
+          <div className="flex flex-col items-end text-sm mb-1 bg-gray-50 p-2 rounded-lg border border-gray-100">
+            <span className="text-gray-500">سعر العقار: {formatCurrency(property.pricePerMonth)}</span>
+            <span className="text-gray-500">رسوم المنصة (10%): {formatCurrency((property.pricePerMonth || 0) * 0.10)}</span>
+            <span className="font-bold text-blue-600 mt-1">الإجمالي المطلوب: {formatCurrency((property.pricePerMonth || 0) * 0.10)}</span>
+          </div>
+        ) : (
+          <p className="text-lg font-bold text-blue-600">
+            {formatCurrency(property.pricePerMonth)}
+          </p>
+        )}
+        {!property.listingPaid && property.status === "APPROVED" && (
           <button
             type="button"
             onClick={handlePayment}
@@ -132,6 +140,11 @@ export default function PropertyListItem({
             )}
             دفع الرسوم
           </button>
+        )}
+        {!property.listingPaid && property.status === "PENDING" && (
+          <p className="text-xs text-amber-600 text-center max-w-[120px] bg-amber-50 p-1.5 rounded-md">
+            سيظهر زر الدفع بعد الموافقة على العقار
+          </p>
         )}
         <div className="flex items-center gap-1">
           {onEdit && (

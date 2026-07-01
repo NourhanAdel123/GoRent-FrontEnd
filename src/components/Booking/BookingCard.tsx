@@ -7,6 +7,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PaymentIcon from "@mui/icons-material/Payment";
 import { Booking } from "../../types/booking";
 import { paymentService } from "../../services/payment";
+import { calculateBookingBreakdown } from "../../lib/pricing";
+import { formatCurrency } from "../../lib/formatters";
 
 const statusMap = {
     PENDING_OWNER_APPROVAL: { label: "في انتظار موافقة المالك", color: "warning" as const },
@@ -100,6 +102,24 @@ export default function BookingCard({ booking, onCancel }: BookingCardProps) {
                             {new Date(booking.endDate).toLocaleDateString("ar-EG")}
                         </Typography>
                     </Box>
+
+                    {/* Price Breakdown */}
+                    {booking.status === "PENDING_PAYMENT" && property && (
+                        <Box sx={{ mb: 2, p: 1.5, bgcolor: "grey.50", borderRadius: 2, border: "1px solid", borderColor: "grey.100" }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+                                <span>قيمة الإيجار:</span>
+                                <span>{formatCurrency(calculateBookingBreakdown(booking.startDate, booking.endDate, property).stayValue)}</span>
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+                                <span>رسوم السمسرة (10%):</span>
+                                <span>{formatCurrency(calculateBookingBreakdown(booking.startDate, booking.endDate, property).brokerageFee)}</span>
+                            </Typography>
+                            <Typography variant="subtitle2" color="primary.main" sx={{ display: "flex", justifyContent: "space-between", mt: 1, fontWeight: 700 }}>
+                                <span>الإجمالي المطلوب:</span>
+                                <span>{formatCurrency(calculateBookingBreakdown(booking.startDate, booking.endDate, property).totalAmount)}</span>
+                            </Typography>
+                        </Box>
+                    )}
 
                     {/* Pay Error */}
                     {payError && (
