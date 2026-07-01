@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
-import React from 'react';
-import { Box, Container, Snackbar, Alert, Badge } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Box, Container, Snackbar, Alert, Badge, CircularProgress } from '@mui/material';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNotifications } from '../../../hooks/useNotifications';
 import { ChatSocketProvider } from '../../../context/ChatSocketContext';
@@ -18,8 +19,16 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 export default function OwnerDashboardLayout({ children }: { children: React.ReactNode }) {
-  const { logout, isAuthenticated, user } = useAuth();
+  const router = useRouter();
+  const { logout, isAuthenticated, isLoading, user } = useAuth();
   const { unreadCount, toastOpen, toastMessage, handleCloseToast } = useNotifications();
+
+  // Redirect to login if not authenticated after loading completes
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/auth/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   const menuItems: DashboardNavItem[] = [
     { id: 'overview', label: 'نظرة عامة', href: '/dashboard/owner', icon: <DashboardIcon /> },
@@ -46,7 +55,17 @@ export default function OwnerDashboardLayout({ children }: { children: React.Rea
     { id: 'settings', label: 'الإعدادات', href: '/dashboard/owner/settings', icon: <SettingsOutlinedIcon /> },
   ];
 
-  if (!user) return null;
+  // Show loading spinner while checking auth
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  // Don't render dashboard content if not authenticated (redirect is happening)
+  if (!isAuthenticated || !user) return null;
 
   return (
     <ChatSocketProvider enabled={isAuthenticated}>

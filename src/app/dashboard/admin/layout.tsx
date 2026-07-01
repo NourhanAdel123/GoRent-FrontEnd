@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Divider,
@@ -9,8 +9,9 @@ import {
   Container,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
 import { useNotifications } from "../../../hooks/useNotifications";
 import DashboardSidebar, {
@@ -33,15 +34,18 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { logout, user } = useAuth();
+  const router = useRouter();
+  const { logout, user, isAuthenticated, isLoading } = useAuth();
   const { unreadCount, toastOpen, toastMessage, handleCloseToast } =
     useNotifications();
   const pathname = usePathname();
-  const [isMounted, setIsMounted] = useState(false);
 
+  // Redirect to login if not authenticated after loading completes
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/auth/login");
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   // Using 'href' and 'label' to match your components structure
   const menuItems: DashboardNavItem[] = [
@@ -112,11 +116,17 @@ export default function AdminDashboardLayout({
 
   // Removed the unused duplicate drawerContent code since DashboardSidebar is rendering the sidebar
 
-  if (!isMounted) {
+  // Show loading spinner while checking auth
+  if (isLoading) {
     return (
-      <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f8f9fa" }} />
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", bgcolor: "#f8f9fa" }}>
+        <CircularProgress />
+      </Box>
     );
   }
+
+  // Don't render dashboard content if not authenticated (redirect is happening)
+  if (!isAuthenticated || !user) return null;
 
   return (
     <Box
