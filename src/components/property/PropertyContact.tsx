@@ -27,10 +27,10 @@ export default function PropertyContact({ property }: PropertyContactProps) {
   const [localError, setLocalError] = useState<string | null>(null);
 
   const owner = typeof property.ownerId === 'string'
-    ? { _id: property.ownerId, name: 'Owner', email: '', avatar: undefined }
-    : (property.ownerId as unknown as { _id: string; name: string; email: string; avatar?: string });
+    ? { _id: property.ownerId, name: 'Owner', email: '', profileImage: undefined }
+    : (property.ownerId as unknown as { _id: string; name: string; email: string; profileImage?: string });
 
-  const ownerAvatar = owner.avatar;
+  const ownerAvatar = owner.profileImage;
   const contactError = localError || chatError;
 
   const handleContactOwner = async () => {
@@ -93,7 +93,7 @@ export default function PropertyContact({ property }: PropertyContactProps) {
             }}
           >
             <Image
-              src={ownerAvatar || '/user-default.jpg'}
+              src={owner.profileImage || '/user.png'}
               alt={owner.name}
               fill
               sizes="64px"
