@@ -1,6 +1,8 @@
+import { CURRENCY_SYMBOL } from "../constants/currency";
+
 export function formatCurrency(amount: number | null | undefined): string {
-  if (amount == null) return `0 ر.س`;
-  return `${amount.toLocaleString("ar-SA")} ر.س`;
+  if (amount == null) return `0 ${CURRENCY_SYMBOL}`;
+  return `${amount.toLocaleString("ar-SA")} ${CURRENCY_SYMBOL}`;
 }
 
 export function formatRelativeTime(dateString: string): string {
