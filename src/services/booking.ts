@@ -12,7 +12,7 @@
 //                 "Authorization": `Bearer ${token}`,
 //             },
 //         });
-//         if (!res.ok) throw new Error("فشل جلب الحجوزات");
+//         if (!res.ok) throw new Error("تعذر تحميل قائمة الحجوزات.");
 //         return res.json();
 //     },
 
@@ -25,7 +25,7 @@
 //                 "Authorization": `Bearer ${token}`,
 //             },
 //         });
-//         if (!res.ok) throw new Error("فشل إلغاء الحجز");
+//         if (!res.ok) throw new Error("تعذر إلغاء الحجز، يرجى المحاولة لاحقاً.");
 //         return res.json();
 //     },
 
@@ -43,7 +43,7 @@ import {
   CreateBookingResponse,
   OwnerBookingsResponse,
   OwnerAnalytics,
-} from "../types/booking";
+} from "@/types/booking";
 
 interface GetTenantBookingsResponse {
   bookings: Booking[];

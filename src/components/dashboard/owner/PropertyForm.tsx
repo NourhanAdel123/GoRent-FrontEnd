@@ -139,7 +139,7 @@ export default function PropertyForm({
 
   const onSubmit = async (values: PropertyFormValues) => {
     if (!location) {
-      setLocationError("يرجى تحديد موقع العقار على الخريطة");
+      setLocationError("يرجى التأكد من تحديد موقع العقار بدقة على الخريطة.");
       return;
     }
 

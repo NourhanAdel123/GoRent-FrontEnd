@@ -44,7 +44,7 @@ export function useAdminDisputes() {
                 prev.map((d) => (d._id === id ? { ...d, status } : d))
             );
         } catch {
-            setError("فشل تحديث حالة النزاع");
+            setError("تعذر تحديث حالة النزاع، يرجى المحاولة مرة أخرى.");
         }
     };
 
@@ -65,7 +65,7 @@ export function useAdminDisputes() {
                     setPagination(data.pagination);
                 }
             } catch {
-                if (!ignore) setError("فشل جلب النزاعات");
+                if (!ignore) setError("تعذر تحميل قائمة النزاعات.");
             } finally {
                 if (!ignore) setIsLoading(false);
             }

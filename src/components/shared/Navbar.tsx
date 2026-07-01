@@ -155,7 +155,7 @@ export default function Navbar() {
                 <List sx={{ px: 2, py: 2 }}>
                   {pages.map((page) => {
                     // Quick check if the path is active (handling Profile?tab=messages specially is tricky in pathname, but we'll exact match or handle simple paths)
-                    const isActive = pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]);
+                    const isActive = page.path !== '/auth/login' && (pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]));
                     
                     return (
                       <ListItem key={page.name} disablePadding sx={{ mb: 1 }}>
@@ -212,7 +212,7 @@ export default function Navbar() {
           {/* Desktop Links */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 4, gap: 1 }}>
             {pages.map((page) => {
-              const isActive = pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]);
+              const isActive = page.path !== '/auth/login' && (pathname === page.path || (page.path.includes('?') && pathname === page.path.split('?')[0] && typeof window !== 'undefined' && window.location.search === '?' + page.path.split('?')[1]));
               
               return (
                 <Button
