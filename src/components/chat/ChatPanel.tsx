@@ -21,6 +21,7 @@ interface ChatPanelProps {
   onSend: (text: string) => Promise<void>;
   onTyping?: (isTyping: boolean) => void;
   emptyPanelHint?: string;
+  onBack?: () => void;
 }
 
 export default function ChatPanel({
