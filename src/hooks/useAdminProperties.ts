@@ -68,7 +68,7 @@ export function useAdminProperties() {
                     setError(null);
                 }
             } catch {
-                if (!ignore) setError("فشل جلب العقارات");
+                if (!ignore) setError("تعذر تحميل العقارات في الوقت الحالي.");
             } finally {
                 if (!ignore) setIsLoading(false);
             }

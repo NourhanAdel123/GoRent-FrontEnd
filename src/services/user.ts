@@ -10,7 +10,7 @@ export const userService = {
             credentials: "include",
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error("فشل تحديث البيانات");
+        if (!res.ok) throw new Error("حدث خطأ أثناء تحديث البيانات، حاول مرة أخرى.");
         return res.json();
     },
 
@@ -36,7 +36,7 @@ export const userService = {
             credentials: "include",
             body: formData,
         });
-        if (!res.ok) throw new Error("فشل تحديث الصورة");
+        if (!res.ok) throw new Error("تعذر رفع الصورة، يرجى التأكد من حجمها وحاول مجدداً.");
         return res.json();
     },
 };

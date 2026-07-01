@@ -39,7 +39,7 @@ export default function PropertyReviews({ targetUserId, propertyId }: PropertyRe
         setReviews(data.reviews || []);
       } catch (err) {
         console.error("Failed to fetch reviews", err);
-        setError("فشل في تحميل التقييمات");
+        setError("تعذر تحميل التقييمات في الوقت الحالي.");
       } finally {
         setLoading(false);
       }

@@ -16,7 +16,7 @@ export function useBookings() {
             const data = await bookingService.getTenantBookings();
             setBookings(data.bookings);
         } catch {
-            setError("Failed to load bookings");
+            setError("عذراً، واجهنا مشكلة في تحميل حجوزاتك.");
         } finally {
             setIsLoading(false);
         }
@@ -27,7 +27,7 @@ export function useBookings() {
             await bookingService.cancelBooking(id);
             await fetchBookings();
         } catch {
-            setError("Failed to cancel booking");
+            setError("عذراً، لم نتمكن من إلغاء الحجز، حاول مرة أخرى.");
         }
     };
 

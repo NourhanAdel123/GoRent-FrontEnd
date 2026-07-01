@@ -264,7 +264,7 @@ export const adminService = {
     } else if (status === "REJECTED") {
       endpoint = `/api/disputes/${id}/reject`;
     } else {
-      throw new Error("Cannot set dispute status to OPEN via API");
+      throw new Error("لا يمكن تغيير حالة النزاع إلى مفتوح.");
     }
 
     await fetchApi(endpoint, { method: "PATCH" });

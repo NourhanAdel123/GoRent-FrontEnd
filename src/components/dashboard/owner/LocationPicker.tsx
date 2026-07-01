@@ -39,7 +39,7 @@ export default function LocationPicker({
 
   const handleUseCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setLocationError("المتصفح لا يدعم تحديد الموقع");
+      setLocationError("عذراً، متصفحك لا يدعم خاصية تحديد الموقع الجغرافي.");
       return;
     }
 
@@ -55,7 +55,7 @@ export default function LocationPicker({
         setIsLocating(false);
       },
       () => {
-        setLocationError("تعذر الحصول على موقعك. تأكد من السماح بالوصول للموقع.");
+        setLocationError("لم نتمكن من تحديد موقعك، يرجى التأكد من منح صلاحيات الموقع للمتصفح.");
         setIsLocating(false);
       },
       { enableHighAccuracy: true, timeout: 15000 },
@@ -82,16 +82,16 @@ export default function LocationPicker({
         { headers: { "Accept-Language": "ar" } },
       );
 
-      if (!response.ok) throw new Error("فشل البحث");
+      if (!response.ok) throw new Error("عذراً، فشلت عملية البحث. حاول مرة أخرى.");
 
       const results = (await response.json()) as NominatimResult[];
       setSearchResults(results);
 
       if (results.length === 0) {
-        setLocationError("لم يتم العثور على نتائج لهذا العنوان");
+        setLocationError("لم نعثر على أي عقارات مطابقة لهذا العنوان.");
       }
     } catch {
-      setLocationError("فشل البحث عن العنوان");
+      setLocationError("حدث خطأ أثناء البحث عن العنوان، يرجى المحاولة لاحقاً.");
       setSearchResults([]);
     } finally {
       setIsSearching(false);

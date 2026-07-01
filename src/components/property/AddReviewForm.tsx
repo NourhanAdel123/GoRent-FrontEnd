@@ -18,11 +18,11 @@ export default function AddReviewForm({ propertyId, onReviewAdded }: AddReviewFo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rating) {
-      setError("الرجاء تحديد التقييم");
+      setError("يرجى اختيار التقييم المناسب قبل الإرسال.");
       return;
     }
     if (!comment.trim()) {
-      setError("الرجاء كتابة تعليق");
+      setError("يرجى كتابة رأيك في التعليقات قبل الإرسال.");
       return;
     }
 

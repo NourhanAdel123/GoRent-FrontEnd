@@ -15,7 +15,7 @@ export function useAdminReport() {
             const data = await adminService.getReport();
             setReport(data.report);
         } catch {
-            setError("فشل جلب التقارير");
+            setError("تعذر تحميل التقارير.");
         } finally {
             setIsLoading(false);
         }

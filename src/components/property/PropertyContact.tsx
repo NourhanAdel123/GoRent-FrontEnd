@@ -42,12 +42,12 @@ export default function PropertyContact({ property }: PropertyContactProps) {
     }
 
     if (user?.role !== 'tenant') {
-      setLocalError('يمكن للمستأجرين فقط بدء محادثة مع المالك.');
+      setLocalError('عذراً، يحق للمستأجرين فقط التواصل مع المُلاك عبر المحادثات.');
       return;
     }
 
     if (user._id === owner._id) {
-      setLocalError('لا يمكنك بدء محادثة مع نفسك.');
+      setLocalError('لا يمكنك التواصل مع حسابك الخاص.');
       return;
     }
 
