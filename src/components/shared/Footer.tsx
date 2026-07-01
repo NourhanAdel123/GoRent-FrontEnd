@@ -97,7 +97,6 @@ export default function Footer() {
               الدعم الفني
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <FooterLink href="/help">مركز المساعدة</FooterLink>
               <FooterLink href="/contact">اتصل بنا</FooterLink>
               <FooterLink href="/terms">شروط الاستخدام</FooterLink>
             </Box>
